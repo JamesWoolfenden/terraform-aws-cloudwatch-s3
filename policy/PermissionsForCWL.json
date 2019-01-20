@@ -1,0 +1,14 @@
+{
+    "Statement":[
+      {
+        "Effect":"Allow",
+        "Action":["firehose:*"],
+        "Resource":["arn:aws:firehose:region:123456789012:*"]
+      },
+      {
+        "Effect":"Allow",
+        "Action":["iam:PassRole"],
+        "Resource":["arn:aws:iam::123456789012:role/CWLtoKinesisFirehoseRole"]
+      }
+    ]
+}

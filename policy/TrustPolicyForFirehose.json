@@ -1,0 +1,14 @@
+{
+  "Statement": {
+    "Effect": "Allow",
+    "Principal": {
+      "Service": "firehose.amazonaws.com"
+    },
+    "Action": "sts:AssumeRole",
+    "Condition": {
+      "StringEquals": {
+        "sts:ExternalId": "505604545294"
+      }
+    }
+  }
+}

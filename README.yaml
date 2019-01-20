@@ -1,0 +1,79 @@
+---
+#
+# This is the canonical configuration for the `README.md`
+# Run `make readme` to rebuild the `README.md`
+#
+
+# Name of this project
+name: terraform-aws-cloudwatchtos3
+
+# Tags of this project
+tags:
+  - aws
+  - terraform
+  - terraform-modules
+  - cloudwatchtos3
+
+# Categories of this project
+categories:
+  - terraform-modules/CICD
+
+# Logo for this project
+#logo: docs/slalom-logo.png
+
+# License of this project
+license: "APACHE2"
+
+# Copyrights
+copyrights:
+  - name: "Slalom, LLC"
+    url: "https://slalom.com"
+    year: "2019"
+
+# Canonical GitHub repo
+github_repo: jameswoolfenden/terraform-aws-cloudwatchtos3
+
+# Badges to display
+badges:
+  - name: "Build Status"
+    image: "https://api.travis-ci.com/JamesWoolfenden/terraform-aws-cloudwatchtos3.svg?branch=master"
+    url: "https://travis-ci.com/JamesWoolfenden/terraform-aws-cloudwatchtos3"
+  - name: "Latest Release"
+    image: "https://img.shields.io/github/release/JamesWoolfenden/terraform-aws-cloudwatchtos3.svg"
+    url: "https://github.com/JamesWoolfenden/terraform-aws-cloudwatchtos3/releases/latest"
+
+related:
+  - name: "terraform-aws-codebuild"
+    description: "Making a Build pipeline"
+    url: "https://github.com/jameswoolfenden/terraform-aws-codebuild"
+
+# Short description of this project
+description: |-
+  Terraform module to provision infra that collates cloudwatch data into an s3 data lake [`cloudwatch`](https://aws.amazon.com/cloudwatch/).
+
+# How to use this project
+usage: |-
+  Include this repository as a module in your existing terraform code:
+
+  ```hcl
+  module "cloudwatchtos3" {
+    source          = "github.com/jameswoolfenden/terraform-aws-cloudwatchtos3"
+    cloudwatch_name = "${var.cloudwatch_name}"
+    log_bucket      = "${var.log_bucket}"
+    log_name        = "${var.log_name}"
+    log_stream      = "${var.log_stream}"
+    region_desc     = "${var.region_desc}"
+    filter_pattern  = "${var.filter_pattern}"
+    common_tags     = "${var.common_tags}"
+    depends_on      = ["${aws_iam_group.developer.group_name}"]
+  }
+  ```
+
+include:
+  - "docs/targets.md"
+  - "docs/terraform.md"
+
+# Contributors to this project
+contributors:
+  - name: "James Woolfenden"
+    github: "jameswoolfenden"
