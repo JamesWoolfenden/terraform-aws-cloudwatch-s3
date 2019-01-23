@@ -16,7 +16,7 @@ variable "log_stream" {
 
 variable "filter_pattern" {
   description = "description"
-  default = "description"
+  default     = "description"
 }
 
 variable "region_desc" {
@@ -24,8 +24,7 @@ variable "region_desc" {
 }
 
 variable "log_group_name" {
-  default = 
-    "/var/log/messages"
+  default = "/var/log/messages"
 }
 
 variable "common_tags" {
