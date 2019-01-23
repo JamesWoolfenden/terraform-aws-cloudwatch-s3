@@ -2,6 +2,17 @@ variable "cloudwatch_name" {
   description = ""
 }
 
+variable "region" {
+  description = "description"
+  default = "eu-west-1"
+}
+
+variable "region_secondary" {
+  description = "description"
+  default = "eu-west-2"
+}
+
+
 variable "log_bucket" {
   description = ""
 }
