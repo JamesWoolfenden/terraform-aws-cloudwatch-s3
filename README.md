@@ -26,24 +26,7 @@ module "cloudwatchtos3" {
   region_desc     = "${var.region_desc}"
   filter_pattern  = "${var.filter_pattern}"
   common_tags     = "${var.common_tags}"
-  depends_on      = ["${aws_iam_group.developer.group_name}"]
 }
-```
-
-## Makefile Targets
-
-```make
-Available targets:
-
-  help/all:
-                          Display help for all targets
-  help/short:
-                        This help short screen
-  help:
-                              Help screen
-  lint:
-                              Lint terraform code
-
 ```
 
 ## Inputs

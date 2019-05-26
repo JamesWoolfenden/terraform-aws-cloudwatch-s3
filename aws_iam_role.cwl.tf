@@ -6,7 +6,7 @@ resource "aws_iam_role" "cwl" {
     "Statement": {
       "Effect": "Allow",
       "Principal": {
-        "Service": "logs.eu-west-2.amazonaws.com"
+        "Service": "logs.${data.aws_region.current.name}.amazonaws.com"
       },
       "Action": "sts:AssumeRole"
     }

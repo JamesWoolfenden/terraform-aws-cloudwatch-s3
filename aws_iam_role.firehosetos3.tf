@@ -8,12 +8,7 @@ resource "aws_iam_role" "firehosetos3" {
       "Principal": {
         "Service": "firehose.amazonaws.com"
       },
-      "Action": "sts:AssumeRole",
-      "Condition": {
-        "StringEquals": {
-          "sts:ExternalId": "${data.aws_caller_identity.current.account_id}"
-        }
-      }
+      "Action": "sts:AssumeRole"
     }
   }
 EOF
