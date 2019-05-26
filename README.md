@@ -18,7 +18,7 @@ Include this repository as a module in your existing terraform code:
 
 ```hcl
 module "cloudwatchtos3" {
-  source          = "github.com/jameswoolfenden/terraform-aws-cloudwatchtos3"
+  source          = "ameswoolfenden/aws/cloudwatchtos3"
   cloudwatch_name = "${var.cloudwatch_name}"
   log_bucket      = "${var.log_bucket}"
   log_name        = "${var.log_name}"
@@ -35,7 +35,6 @@ module "cloudwatchtos3" {
 |------|-------------|:----:|:-----:|:-----:|
 | cloudwatch_name | - | string | - | yes |
 | common_tags | - | map | - | yes |
-| depends_on | This is a way to make a module depends on, which isnt built in. | list | `<list>` | no |
 | filter_pattern | description | string | `description` | no |
 | log_bucket | - | string | - | yes |
 | log_group_name | - | string | `/var/log/messages` | no |
