@@ -8,9 +8,7 @@ Terraform module to provision infra that collates cloudwatch data into an s3 dat
 
 ---
 
-This project uses the "build-harness" a modified version of the project ["SweetOps"](https://cpco.io/sweetops) from Cloudposse. Sweet indeed.
-
-It's 100% Open Source and licensed under the [APACHE2](LICENSE).
+This project 100% Open Source and licensed under the [APACHE2](LICENSE).
 
 ## Usage
 
@@ -77,22 +75,22 @@ Copyright © 2019-2019 [Slalom, LLC](https://slalom.com)
 
 See [LICENSE](LICENSE) for full details.
 
-    Licensed to the Apache Software Foundation (ASF) under one
-    or more contributor license agreements.  See the NOTICE file
-    distributed with this work for additional information
-    regarding copyright ownership.  The ASF licenses this file
-    to you under the Apache License, Version 2.0 (the
-    "License"); you may not use this file except in compliance
-    with the License.  You may obtain a copy of the License at
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
 
-      https://www.apache.org/licenses/LICENSE-2.0
+<https://www.apache.org/licenses/LICENSE-2.0>
 
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on an
-    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied.  See the License for the
-    specific language governing permissions and limitations
-    under the License.
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
 
 ### Contributors
 
@@ -112,5 +110,4 @@ See [LICENSE](LICENSE) for full details.
 [share_linkedin]: https://www.linkedin.com/shareArticle?mini=true&title=terraform-aws-cloudwatchtos3&url=https://github.com/jameswoolfenden/terraform-aws-cloudwatchtos3
 [share_reddit]: https://reddit.com/submit/?url=https://github.com/jameswoolfenden/terraform-aws-cloudwatchtos3
 [share_facebook]: https://facebook.com/sharer/sharer.php?u=https://github.com/jameswoolfenden/terraform-aws-cloudwatchtos3
-[share_googleplus]: https://plus.google.com/share?url=https://github.com/jameswoolfenden/terraform-aws-cloudwatchtos3
 [share_email]: mailto:?subject=terraform-aws-cloudwatchtos3&body=https://github.com/jameswoolfenden/terraform-aws-cloudwatchtos3
