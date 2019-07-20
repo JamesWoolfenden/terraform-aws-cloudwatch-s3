@@ -3,12 +3,6 @@ variable "cloudwatch_name" {
   type        = string
 }
 
-variable "region" {
-  description = "description"
-  default     = "eu-west-1"
-  type        = string
-}
-
 variable "log_bucket" {
   description = ""
   type        = string
@@ -25,8 +19,9 @@ variable "log_stream" {
 }
 
 variable "filter_pattern" {
+  type        = string
   description = "description"
-  default     = "description"
+  default     = ""
 }
 
 variable "region_desc" {
@@ -41,6 +36,6 @@ variable "log_group_name" {
 }
 
 variable "common_tags" {
-  type        = "map"
+  type        = map
   description = "Implements the common tags scheme"
 }

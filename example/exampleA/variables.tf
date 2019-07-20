@@ -21,7 +21,7 @@ variable "log_stream" {
 variable "filter_pattern" {
   type=string
   description = "description"
-  default     = "description"
+  default     = ""
 }
 
 variable "region_desc" {

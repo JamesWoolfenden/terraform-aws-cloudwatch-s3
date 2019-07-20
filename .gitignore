@@ -3,12 +3,18 @@
 *.tfstate.backup
 
 # Module directory
+.terraform/
 .terraform
 .idea
 *.iml
+*.orig
 .build-harness
 build-harness
 *.ini
 *~HEAD
 *backup
-*.orig
+*.ini
+tmp
+lambda
+*~HEAD
+*backup
