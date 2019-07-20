@@ -1,6 +1,6 @@
 [![Slalom][logo]](https://slalom.com)
 
-# terraform-aws-cloudwatchtos3 [![Build Status](https://api.travis-ci.com/JamesWoolfenden/terraform-aws-cloudwatchtos3.svg?branch=master)](https://travis-ci.com/JamesWoolfenden/terraform-aws-cloudwatchtos3) [![Latest Release](https://img.shields.io/github/release/JamesWoolfenden/terraform-aws-cloudwatchtos3.svg)](https://github.com/JamesWoolfenden/terraform-aws-cloudwatchtos3/releases/latest)
+# terraform-aws-cloudwatch-s3 [![Build Status](https://api.travis-ci.com/JamesWoolfenden/terraform-aws-cloudwatch-s3.svg?branch=master)](https://travis-ci.com/JamesWoolfenden/terraform-aws-cloudwatch-s3) [![Latest Release](https://img.shields.io/github/release/JamesWoolfenden/terraform-aws-cloudwatch-s3.svg)](https://github.com/JamesWoolfenden/terraform-aws-cloudwatch-s3/releases/latest)
 
 Terraform module to provision infra that collates cloudwatch data into an s3 data lake [`cloudwatch`](https://aws.amazon.com/cloudwatch/).
 
@@ -13,8 +13,8 @@ This project 100% Open Source and licensed under the [APACHE2](LICENSE).
 Include this repository as a module in your existing terraform code:
 
 ```hcl
-module "cloudwatchtos3" {
-  source          = "jameswoolfenden/aws/cloudwatchtos3"
+module "cloudwatch-s3" {
+  source          = "jameswoolfenden/aws/cloudwatch-s3"
   cloudwatch_name = var.cloudwatch_name
   log_bucket      = var.log_bucket
   log_name        = var.log_name
@@ -56,13 +56,13 @@ Check out these related projects.
 
 **Got a question?**
 
-File a GitHub [issue](https://github.com/jameswoolfenden/terraform-aws-cloudwatchtos3/issues).
+File a GitHub [issue](https://github.com/jameswoolfenden/terraform-aws-cloudwatch-s3/issues).
 
 ## Contributing
 
 ### Bug Reports & Feature Requests
 
-Please use the [issue tracker](https://github.com/jameswoolfenden/terraform-aws-cloudwatchtos3/issues) to report any bugs or file feature requests.
+Please use the [issue tracker](https://github.com/jameswoolfenden/terraform-aws-cloudwatch-s3/issues) to report any bugs or file feature requests.
 
 ## Copyrights
 
@@ -105,8 +105,8 @@ under the License.
 [linkedin]: https://www.linkedin.com/company/slalom-consulting/
 [twitter]: https://twitter.com/Slalom
 
-[share_twitter]: https://twitter.com/intent/tweet/?text=terraform-aws-cloudwatchtos3&url=https://github.com/jameswoolfenden/terraform-aws-cloudwatchtos3
-[share_linkedin]: https://www.linkedin.com/shareArticle?mini=true&title=terraform-aws-cloudwatchtos3&url=https://github.com/jameswoolfenden/terraform-aws-cloudwatchtos3
-[share_reddit]: https://reddit.com/submit/?url=https://github.com/jameswoolfenden/terraform-aws-cloudwatchtos3
-[share_facebook]: https://facebook.com/sharer/sharer.php?u=https://github.com/jameswoolfenden/terraform-aws-cloudwatchtos3
-[share_email]: mailto:?subject=terraform-aws-cloudwatchtos3&body=https://github.com/jameswoolfenden/terraform-aws-cloudwatchtos3
+[share_twitter]: https://twitter.com/intent/tweet/?text=terraform-aws-cloudwatch-s3&url=https://github.com/jameswoolfenden/terraform-aws-cloudwatch-s3
+[share_linkedin]: https://www.linkedin.com/shareArticle?mini=true&title=terraform-aws-cloudwatch-s3&url=https://github.com/jameswoolfenden/terraform-aws-cloudwatch-s3
+[share_reddit]: https://reddit.com/submit/?url=https://github.com/jameswoolfenden/terraform-aws-cloudwatch-s3
+[share_facebook]: https://facebook.com/sharer/sharer.php?u=https://github.com/jameswoolfenden/terraform-aws-cloudwatch-s3
+[share_email]: mailto:?subject=terraform-aws-cloudwatch-s3&body=https://github.com/jameswoolfenden/terraform-aws-cloudwatch-s3
