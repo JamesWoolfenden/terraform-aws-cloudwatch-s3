@@ -22,4 +22,3 @@ destroy: init
 
 valid:
 	terraform fmt -check=true -diff=true
-

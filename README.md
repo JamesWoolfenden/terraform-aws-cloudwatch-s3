@@ -1,6 +1,6 @@
 [![Slalom][logo]](https://slalom.com)
 
-# terraform-aws-cloudwatch-s3 [![Build Status](https://api.travis-ci.com/JamesWoolfenden/terraform-aws-cloudwatch-s3.svg?branch=master)](https://travis-ci.com/JamesWoolfenden/terraform-aws-cloudwatch-s3) [![Latest Release](https://img.shields.io/github/release/JamesWoolfenden/terraform-aws-cloudwatch-s3.svg)](https://github.com/JamesWoolfenden/terraform-aws-cloudwatch-s3/releases/latest)
+# terraform-aws-cloudwatch-s3 [![Build Status](https://api.travis-ci.com/JamesWoolfenden/terraform-aws-cloudwatch-s3.svg?branch=master)](https://travis-ci.com/JamesWoolfenden/terraform-aws-cloudwatch-s3) [![Latest Release](https://img.shields.io/github/release/JamesWoolfenden/terraform-aws-cloudwatch-s3.svg)](https://github.com/JamesWoolfenden/terraform-aws-cloudwatch-s3/releases/latest)  [![Latest Release](https://img.shields.io/github/release/JamesWoolfenden/terraform-aws-cloudfront-s3.svg)](https://github.com/JamesWoolfenden/terraform-aws-cloudfront-s3/releases/latest)[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 
 Terraform module to provision infra that collates cloudwatch data into an s3 data lake [`cloudwatch`](https://aws.amazon.com/cloudwatch/).
 
@@ -26,25 +26,32 @@ module "cloudwatch-s3" {
 ```
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+## Providers
+
+| Name | Version |
+|------|---------|
+| aws | n/a |
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|:----:|:-----:|:-----:|
-| cloudwatch_name | - | string | - | yes |
-| common_tags | - | map | - | yes |
-| filter_pattern | description | string | `description` | no |
-| log_bucket | - | string | - | yes |
-| log_group_name | - | string | `/var/log/messages` | no |
-| log_name | - | string | - | yes |
-| log_stream | - | string | - | yes |
-| region_desc | Region | string | - | yes |
+|------|-------------|------|---------|:-----:|
+| cloudwatch\_name | n/a | `string` | n/a | yes |
+| common\_tags | Implements the common tags scheme | `map` | n/a | yes |
+| filter\_pattern | description | `string` | `""` | no |
+| log\_bucket | n/a | `string` | n/a | yes |
+| log\_group\_name | A default log group name | `string` | `"/var/log/messages"` | no |
+| log\_name | n/a | `string` | n/a | yes |
+| log\_stream | A log stream to watch | `string` | n/a | yes |
+| region\_desc | Region | `string` | n/a | yes |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| cwlrolearn | - |
-| firehosearn | - |
+| cwlrolearn | n/a |
+| firehosearn | n/a |
+
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Related Projects
 
@@ -66,7 +73,7 @@ Please use the [issue tracker](https://github.com/jameswoolfenden/terraform-aws-
 
 ## Copyrights
 
-Copyright © 2019-2019 [Slalom, LLC](https://slalom.com)
+Copyright © 2019-2020 [Slalom, LLC](https://slalom.com)
 
 ## License
 
@@ -93,11 +100,10 @@ under the License.
 
 ### Contributors
 
-  [![James Woolfenden][jameswoolfenden_avatar]][jameswoolfenden_homepage]<br/>[James Woolfenden][jameswoolfenden_homepage]
+[![James Woolfenden][jameswoolfenden_avatar]][jameswoolfenden_homepage]<br/>[James Woolfenden][jameswoolfenden_homepage]
 
-  [jameswoolfenden_homepage]: https://github.com/jameswoolfenden
-  [jameswoolfenden_avatar]: https://github.com/jameswoolfenden.png?size=150
-
+[jameswoolfenden_homepage]: https://github.com/jameswoolfenden
+[jameswoolfenden_avatar]: https://github.com/jameswoolfenden.png?size=150
 [logo]: https://gist.githubusercontent.com/JamesWoolfenden/5c457434351e9fe732ca22b78fdd7d5e/raw/15933294ae2b00f5dba6557d2be88f4b4da21201/slalom-logo.png
 [website]: https://slalom.com
 [github]: https://github.com/jameswoolfenden
