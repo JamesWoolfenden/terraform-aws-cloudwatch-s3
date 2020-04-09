@@ -1,5 +1,5 @@
 resource "aws_kinesis_firehose_delivery_stream" "extended_s3_stream" {
-  name        = "${var.cloudwatch_name}-EXTENDED-S3-TEST-STREAM"
+  name        = var.cloudwatch_name
   destination = "extended_s3"
 
   extended_s3_configuration {
