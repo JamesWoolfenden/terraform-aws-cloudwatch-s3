@@ -44,11 +44,13 @@ module "cloudwatch-s3" {
 | cloudwatch\_name | n/a | `string` | n/a | yes |
 | common\_tags | Implements the common tags scheme | `map` | n/a | yes |
 | filter\_pattern | description | `string` | `""` | no |
+| kms\_master\_key\_id | kms key id | `string` | `"aws/s3"` | no |
 | log\_bucket | n/a | `string` | n/a | yes |
 | log\_group\_name | A default log group name | `string` | `"/var/log/messages"` | no |
 | log\_name | n/a | `string` | n/a | yes |
 | log\_stream | A log stream to watch | `string` | n/a | yes |
 | region\_desc | Region | `string` | n/a | yes |
+| sse\_algorithm | encryption algorithm to use | `string` | `"aws:kms"` | no |
 
 ## Outputs
 

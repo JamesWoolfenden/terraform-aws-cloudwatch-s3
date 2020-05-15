@@ -39,3 +39,15 @@ variable "common_tags" {
   type        = map
   description = "Implements the common tags scheme"
 }
+
+variable "sse_algorithm" {
+  type        = string
+  description = "encryption algorithm to use"
+  default     = "aws:kms"
+}
+
+variable "kms_master_key_id" {
+  type        = string
+  description = "kms key id"
+  default     = "aws/s3"
+}
