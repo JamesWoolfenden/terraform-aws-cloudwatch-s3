@@ -4,8 +4,8 @@
 
 [![Build Status](https://github.com/JamesWoolfenden/terraform-aws-cloudwatch-s3/workflows/Verify%20and%20Bump/badge.svg?branch=master)](https://github.com/JamesWoolfenden/terraform-aws-cloudwatch-s3)
 [![Latest Release](https://img.shields.io/github/release/JamesWoolfenden/terraform-aws-cloudwatch-s3.svg)](https://github.com/JamesWoolfenden/terraform-aws-cloudwatch-s3/releases/latest)
-[![Latest Release](https://img.shields.io/github/release/JamesWoolfenden/terraform-aws-cloudfront-s3.svg)](https://github.com/JamesWoolfenden/terraform-aws-cloudfront-s3/releases/latest)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+[![pre-commit](https://img.shields.io/badge/checkov-verified-brightgreen)](https://www.checkov.io/)
 
 Terraform module to provision infra that collates cloudwatch data into an s3 data lake [`cloudwatch`](https://aws.amazon.com/cloudwatch/).
 
@@ -31,7 +31,38 @@ module "cloudwatch-s3" {
 ```
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-Error: no lines in file
+## Requirements
+
+No requirements.
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| aws | n/a |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| cloudwatch\_name | n/a | `string` | n/a | yes |
+| common\_tags | Implements the common tags scheme | `map` | n/a | yes |
+| filter\_pattern | description | `string` | `""` | no |
+| kms\_master\_key\_id | kms key id | `string` | `"aws/s3"` | no |
+| log\_bucket | n/a | `string` | n/a | yes |
+| log\_group\_name | A default log group name | `string` | `"/var/log/messages"` | no |
+| log\_name | n/a | `string` | n/a | yes |
+| log\_stream | A log stream to watch | `string` | n/a | yes |
+| region\_desc | Region | `string` | n/a | yes |
+| sse\_algorithm | encryption algorithm to use | `string` | `"aws:kms"` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| cwlrolearn | n/a |
+| firehosearn | n/a |
+
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Related Projects
 
