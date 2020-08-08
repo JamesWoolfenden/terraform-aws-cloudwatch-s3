@@ -20,6 +20,7 @@ Include this repository as a module in your existing terraform code:
 ```hcl
 module "cloudwatch-s3" {
   source          = "jameswoolfenden/aws/cloudwatch-s3"
+  version         = "v0.2.20"
   cloudwatch_name = var.cloudwatch_name
   log_bucket      = var.log_bucket
   log_name        = var.log_name
@@ -54,6 +55,7 @@ No requirements.
 | log\_name | n/a | `string` | n/a | yes |
 | log\_stream | A log stream to watch | `string` | n/a | yes |
 | region\_desc | Region | `string` | n/a | yes |
+| server\_side\_encryption | Encrypt at rest | `bool` | `false` | no |
 | sse\_algorithm | encryption algorithm to use | `string` | `"aws:kms"` | no |
 
 ## Outputs

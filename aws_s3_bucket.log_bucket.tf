@@ -1,7 +1,7 @@
 resource "aws_s3_bucket" "log_bucket" {
   #checkov:skip=CKV_AWS_21: "Ensure all data stored in the S3 bucket have versioning enabled"
   #checkov:skip=CKV_AWS_18: "Ensure the S3 bucket has access logging enabled"
-  bucket = "${var.log_bucket}-${data.aws_caller_identity.current.account_id}"
+  bucket = var.log_bucket
   acl    = "log-delivery-write"
 
   versioning {
@@ -17,5 +17,6 @@ resource "aws_s3_bucket" "log_bucket" {
       }
     }
   }
+
   tags = var.common_tags
 }
