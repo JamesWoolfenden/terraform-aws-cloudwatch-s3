@@ -35,5 +35,5 @@ variable "log_group_name" {
 }
 
 variable "common_tags" {
-  type = map
+  type = map(any)
 }

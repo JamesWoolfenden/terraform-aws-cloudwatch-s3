@@ -10,7 +10,6 @@ __pycache__/
 .idea
 *.iml
 *.orig
-
 *.ini
 *~HEAD
 *backup
@@ -20,4 +19,6 @@ lambda
 *~HEAD
 *backup
 *.bak
+.terraform.lock.hcl
 .terraform.tfstate.lock.info
+*.log
