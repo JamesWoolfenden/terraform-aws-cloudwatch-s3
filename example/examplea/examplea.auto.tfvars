@@ -4,5 +4,6 @@ log_name        = "jenkins"
 log_stream      = "123454-logstream"
 region_desc     = "euwest1"
 common_tags = {
-  name = "cloudlogger"
+  createby = "terraform"
+  module   = "terraform-aws-cloudwatch-s3"
 }
