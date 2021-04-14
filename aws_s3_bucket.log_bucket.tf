@@ -1,6 +1,9 @@
+
 resource "aws_s3_bucket" "log_bucket" {
-  #checkov:skip=CKV_AWS_21: "Ensure all data stored in the S3 bucket have versioning enabled"
-  #checkov:skip=CKV_AWS_18: "Ensure the S3 bucket has access logging enabled"
+  # tfsec:ignore:AWS077
+	# checkov:skip=CKV_AWS_144: Not relevant
+  # checkov:skip=CKV_AWS_21: "Ensure all data stored in the S3 bucket have versioning enabled"
+  # checkov:skip=CKV_AWS_18: "Ensure the S3 bucket has access logging enabled"
   bucket = var.log_bucket
   acl    = "log-delivery-write"
 
