@@ -8,8 +8,10 @@ variable "log_bucket" {
   type        = string
 }
 
+//If you set this as the default its going to make it
+//hard to delete
 variable "log_bucket_mfa_delete" {
-  default = true
+  default = false
   type    = bool
 }
 

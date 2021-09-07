@@ -11,7 +11,6 @@ resource "aws_kinesis_firehose_delivery_stream" "extended_s3_stream" {
     enabled = var.server_side_encryption
   }
 
-  tags = var.common_tags
 }
 
 variable "server_side_encryption" {
