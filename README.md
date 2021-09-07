@@ -26,7 +26,6 @@ module "cloudwatch-s3" {
   cloudwatch_name = var.cloudwatch_name
   log_bucket      = var.log_bucket
   log_name        = var.log_name
-  log_stream      = var.log_stream
   region_desc     = var.region_desc
   filter_pattern  = var.filter_pattern
 }
@@ -70,14 +69,12 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_cloudwatch_name"></a> [cloudwatch\_name](#input\_cloudwatch\_name) | n/a | `string` | n/a | yes |
-| <a name="input_common_tags"></a> [common\_tags](#input\_common\_tags) | Implements the common tags scheme | `map(any)` | n/a | yes |
 | <a name="input_filter_pattern"></a> [filter\_pattern](#input\_filter\_pattern) | description | `string` | `""` | no |
 | <a name="input_kms_master_key_id"></a> [kms\_master\_key\_id](#input\_kms\_master\_key\_id) | kms key id | `string` | `"aws/s3"` | no |
 | <a name="input_log_bucket"></a> [log\_bucket](#input\_log\_bucket) | n/a | `string` | n/a | yes |
 | <a name="input_log_bucket_mfa_delete"></a> [log\_bucket\_mfa\_delete](#input\_log\_bucket\_mfa\_delete) | If you set this as the default its going to make it hard to delete | `bool` | `false` | no |
 | <a name="input_log_group_name"></a> [log\_group\_name](#input\_log\_group\_name) | A default log group name | `string` | `"/var/log/messages"` | no |
 | <a name="input_log_name"></a> [log\_name](#input\_log\_name) | n/a | `string` | n/a | yes |
-| <a name="input_log_stream"></a> [log\_stream](#input\_log\_stream) | A log stream to watch | `string` | n/a | yes |
 | <a name="input_region_desc"></a> [region\_desc](#input\_region\_desc) | Region | `string` | n/a | yes |
 | <a name="input_server_side_encryption"></a> [server\_side\_encryption](#input\_server\_side\_encryption) | Encrypt at rest | `bool` | `false` | no |
 | <a name="input_sse_algorithm"></a> [sse\_algorithm](#input\_sse\_algorithm) | encryption algorithm to use | `string` | `"aws:kms"` | no |

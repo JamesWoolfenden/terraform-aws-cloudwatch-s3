@@ -13,11 +13,6 @@ variable "log_name" {
   description = ""
 }
 
-variable "log_stream" {
-  type        = string
-  description = ""
-}
-
 variable "filter_pattern" {
   type        = string
   description = "description"
@@ -35,5 +30,6 @@ variable "log_group_name" {
 }
 
 variable "common_tags" {
-  type = map(any)
+  type        = map(any)
+  description = "Supplied to provider default tags"
 }
