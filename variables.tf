@@ -8,6 +8,11 @@ variable "log_bucket" {
   type        = string
 }
 
+variable "log_bucket_mfa_delete" {
+  default = true
+  type    = bool
+}
+
 variable "log_name" {
   description = ""
   type        = string
