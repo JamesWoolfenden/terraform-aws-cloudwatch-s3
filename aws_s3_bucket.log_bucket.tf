@@ -9,7 +9,7 @@ resource "aws_s3_bucket" "log_bucket" {
 
   versioning {
     enabled    = false
-    mfa_delete = true
+    mfa_delete = var.log_bucket_mfa_delete
   }
 
   server_side_encryption_configuration {
