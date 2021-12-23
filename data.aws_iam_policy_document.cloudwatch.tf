@@ -8,4 +8,6 @@ data "aws_iam_policy_document" "cloudwatch" {
     actions   = ["iam:PassRole"]
     resources = [aws_iam_role.cwl.arn]
   }
+
+  version = "2012-10-17"
 }

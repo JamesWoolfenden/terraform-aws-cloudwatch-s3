@@ -9,7 +9,8 @@ resource "aws_iam_role" "firehosetos3" {
         "Service": "firehose.amazonaws.com"
       },
       "Action": "sts:AssumeRole"
-    }
+    },
+    "Version": "2012-10-17"
   }
 EOF
 }

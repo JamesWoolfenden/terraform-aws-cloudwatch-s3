@@ -9,7 +9,8 @@ resource "aws_iam_role" "cwl" {
         "Service": "logs.${data.aws_region.current.name}.amazonaws.com"
       },
       "Action": "sts:AssumeRole"
-    }
+    },
+    "Version": "2012-10-17"
 }
 EOF
 }
