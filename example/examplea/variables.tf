@@ -19,7 +19,7 @@ variable "region_desc" {
 }
 
 variable "log_group_name" {
-  type        = string
+  type        = list(any)
   description = "The name of the log group to stream"
 }
 

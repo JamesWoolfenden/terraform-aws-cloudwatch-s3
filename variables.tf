@@ -27,7 +27,7 @@ variable "region_desc" {
 
 variable "log_group_name" {
   description = "A log group to stream"
-  type        = string
+  type        = list(any)
 }
 
 variable "sse_algorithm" {

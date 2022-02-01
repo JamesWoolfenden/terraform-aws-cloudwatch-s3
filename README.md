@@ -76,7 +76,7 @@ No modules.
 | <a name="input_kms_master_key_id"></a> [kms\_master\_key\_id](#input\_kms\_master\_key\_id) | The KMS key id to use for Encryption | `string` | n/a | yes |
 | <a name="input_log_bucket"></a> [log\_bucket](#input\_log\_bucket) | n/a | `string` | n/a | yes |
 | <a name="input_log_bucket_mfa_delete"></a> [log\_bucket\_mfa\_delete](#input\_log\_bucket\_mfa\_delete) | If you set this as the default its going to make it hard to delete | `bool` | `false` | no |
-| <a name="input_log_group_name"></a> [log\_group\_name](#input\_log\_group\_name) | A log group to stream | `string` | n/a | yes |
+| <a name="input_log_group_name"></a> [log\_group\_name](#input\_log\_group\_name) | A log group to stream | `list(any)` | n/a | yes |
 | <a name="input_region_desc"></a> [region\_desc](#input\_region\_desc) | A string used to help name stuff doesnt have to be a region | `string` | n/a | yes |
 | <a name="input_server_side_encryption"></a> [server\_side\_encryption](#input\_server\_side\_encryption) | Encrypt at rest | `bool` | `true` | no |
 | <a name="input_sse_algorithm"></a> [sse\_algorithm](#input\_sse\_algorithm) | The Encryption algorithm to use | `string` | `"aws:kms"` | no |
