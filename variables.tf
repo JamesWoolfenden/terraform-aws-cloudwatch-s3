@@ -1,4 +1,4 @@
-variable "cloudwatch_name" {
+variable "cloudwatch_stream_name" {
   description = ""
   type        = string
 }
@@ -15,37 +15,34 @@ variable "log_bucket_mfa_delete" {
   type    = bool
 }
 
-variable "log_name" {
-  description = ""
-  type        = string
-}
-
-
 variable "filter_pattern" {
   type        = string
   description = "description"
-  default     = ""
 }
 
 variable "region_desc" {
-  description = "Region"
+  description = "A string used to help name stuff doesnt have to be a region"
   type        = string
 }
 
 variable "log_group_name" {
-  default     = "/var/log/messages"
-  description = "A default log group name"
+  description = "A log group to stream"
   type        = string
 }
 
 variable "sse_algorithm" {
   type        = string
-  description = "encryption algorithm to use"
+  description = "The Encryption algorithm to use"
   default     = "aws:kms"
 }
 
 variable "kms_master_key_id" {
   type        = string
-  description = "kms key id"
-  default     = "aws/s3"
+  description = "The KMS key id to use for Encryption"
+}
+
+variable "server_side_encryption" {
+  type        = bool
+  description = "Encrypt at rest"
+  default     = true
 }

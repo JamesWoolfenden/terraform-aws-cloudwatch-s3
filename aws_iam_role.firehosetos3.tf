@@ -1,5 +1,5 @@
 resource "aws_iam_role" "firehosetos3" {
-  name = "${var.cloudwatch_name}-FIREHOSETOS3-${upper(var.region_desc)}"
+  name = "${var.cloudwatch_stream_name}-FIREHOSETOS3-${upper(var.region_desc)}"
 
   assume_role_policy = <<EOF
 {

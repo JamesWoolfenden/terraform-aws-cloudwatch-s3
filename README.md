@@ -17,19 +17,22 @@ This project 100% Open Source and licensed under the [APACHE2](LICENSE).
 
 ## Usage
 
-Include this repository as a module in your existing terraform code:
+Include this repository as a module in your existing Terraform code:
 
 ```hcl
 module "cloudwatch-s3" {
-  source          = "jameswoolfenden/aws/cloudwatch-s3"
-  version         = "v0.2.20"
-  cloudwatch_name = var.cloudwatch_name
-  log_bucket      = var.log_bucket
-  log_name        = var.log_name
-  region_desc     = var.region_desc
-  filter_pattern  = var.filter_pattern
+  source                 = "jameswoolfenden/aws/cloudwatch-s3"
+  version                = "v0.2.20"
+  cloudwatch_stream_name = var.cloudwatch_stream_name
+  log_bucket             = var.log_bucket
+  region_desc            = var.region_desc
+  filter_pattern         = var.filter_pattern
+  log_group_name         = aws_cloudwatch_log_group.example.name
+  kms_master_key_id      = aws_kms_key.example.arn
 }
 ```
+
+The see folder example/examplea for a worked example.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -68,16 +71,15 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_cloudwatch_name"></a> [cloudwatch\_name](#input\_cloudwatch\_name) | n/a | `string` | n/a | yes |
-| <a name="input_filter_pattern"></a> [filter\_pattern](#input\_filter\_pattern) | description | `string` | `""` | no |
-| <a name="input_kms_master_key_id"></a> [kms\_master\_key\_id](#input\_kms\_master\_key\_id) | kms key id | `string` | `"aws/s3"` | no |
+| <a name="input_cloudwatch_stream_name"></a> [cloudwatch\_stream\_name](#input\_cloudwatch\_stream\_name) | n/a | `string` | n/a | yes |
+| <a name="input_filter_pattern"></a> [filter\_pattern](#input\_filter\_pattern) | description | `string` | n/a | yes |
+| <a name="input_kms_master_key_id"></a> [kms\_master\_key\_id](#input\_kms\_master\_key\_id) | The KMS key id to use for Encryption | `string` | n/a | yes |
 | <a name="input_log_bucket"></a> [log\_bucket](#input\_log\_bucket) | n/a | `string` | n/a | yes |
 | <a name="input_log_bucket_mfa_delete"></a> [log\_bucket\_mfa\_delete](#input\_log\_bucket\_mfa\_delete) | If you set this as the default its going to make it hard to delete | `bool` | `false` | no |
-| <a name="input_log_group_name"></a> [log\_group\_name](#input\_log\_group\_name) | A default log group name | `string` | `"/var/log/messages"` | no |
-| <a name="input_log_name"></a> [log\_name](#input\_log\_name) | n/a | `string` | n/a | yes |
-| <a name="input_region_desc"></a> [region\_desc](#input\_region\_desc) | Region | `string` | n/a | yes |
-| <a name="input_server_side_encryption"></a> [server\_side\_encryption](#input\_server\_side\_encryption) | Encrypt at rest | `bool` | `false` | no |
-| <a name="input_sse_algorithm"></a> [sse\_algorithm](#input\_sse\_algorithm) | encryption algorithm to use | `string` | `"aws:kms"` | no |
+| <a name="input_log_group_name"></a> [log\_group\_name](#input\_log\_group\_name) | A log group to stream | `string` | n/a | yes |
+| <a name="input_region_desc"></a> [region\_desc](#input\_region\_desc) | A string used to help name stuff doesnt have to be a region | `string` | n/a | yes |
+| <a name="input_server_side_encryption"></a> [server\_side\_encryption](#input\_server\_side\_encryption) | Encrypt at rest | `bool` | `true` | no |
+| <a name="input_sse_algorithm"></a> [sse\_algorithm](#input\_sse\_algorithm) | The Encryption algorithm to use | `string` | `"aws:kms"` | no |
 
 ## Outputs
 

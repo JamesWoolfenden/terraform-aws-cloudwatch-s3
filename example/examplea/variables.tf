@@ -1,22 +1,16 @@
-variable "cloudwatch_name" {
+variable "cloudwatch_stream_name" {
   type        = string
   description = ""
 }
 
 variable "log_bucket" {
   type        = string
-  description = ""
-}
-
-variable "log_name" {
-  type        = string
-  description = ""
+  description = "The name of the bucket to stream all the logs to."
 }
 
 variable "filter_pattern" {
   type        = string
   description = "description"
-  default     = ""
 }
 
 variable "region_desc" {
@@ -25,8 +19,8 @@ variable "region_desc" {
 }
 
 variable "log_group_name" {
-  type    = string
-  default = "/var/log/messages"
+  type        = string
+  description = "The name of the log group to stream"
 }
 
 variable "common_tags" {

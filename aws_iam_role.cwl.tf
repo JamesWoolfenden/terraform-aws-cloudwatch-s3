@@ -1,5 +1,5 @@
 resource "aws_iam_role" "cwl" {
-  name = "${var.cloudwatch_name}-CWLTOKINESIS"
+  name = "${var.cloudwatch_stream_name}-CWLTOKINESIS"
 
   assume_role_policy = <<EOF
 {
