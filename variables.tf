@@ -8,6 +8,12 @@ variable "log_bucket" {
   type        = string
 }
 
+variable "log_bucket_logging" {
+  description = "Map containing access bucket logging configuration."
+  type        = map(string)
+  default     = {}
+}
+
 //If you set this as the default its going to make it
 //hard to delete
 variable "log_bucket_mfa_delete" {

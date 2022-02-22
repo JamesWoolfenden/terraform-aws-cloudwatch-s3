@@ -20,4 +20,13 @@ resource "aws_s3_bucket" "log_bucket" {
       }
     }
   }
+
+  dynamic "logging" {
+    for_each = length(keys(var.log_bucket_logging)) == 0 ? [] : [var.log_bucket_logging]
+
+    content {
+      target_bucket = logging.value.target_bucket
+      target_prefix = lookup(logging.value, "target_prefix", null)
+    }
+  }
 }
