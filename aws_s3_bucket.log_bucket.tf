@@ -25,7 +25,7 @@ resource "aws_s3_bucket_logging" "name" {
   bucket = aws_s3_bucket.log_bucket.bucket
 
   target_bucket = var.log_bucket_logging
-  target_prefix = aws_s3_bucket.log_bucket.bucket
+  target_prefix = "${aws_s3_bucket.log_bucket.bucket}/"
 
 }
 
@@ -39,7 +39,7 @@ resource "aws_s3_bucket_versioning" "log_bucket" {
   bucket = aws_s3_bucket.log_bucket.bucket
 
   versioning_configuration {
-    status     = "disabled"
+    status     = "Disabled"
     mfa_delete = var.log_bucket_mfa_delete
   }
 }
