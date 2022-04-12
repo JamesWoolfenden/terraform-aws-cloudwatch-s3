@@ -8,7 +8,9 @@ resource "aws_kinesis_firehose_delivery_stream" "extended_s3_stream" {
   }
 
   server_side_encryption {
-    enabled = var.server_side_encryption
+    enabled  = var.server_side_encryption
+    key_arn  = var.kms_master_key_id
+    key_type = "CUSTOMER_MANAGED_CMK"
   }
 
 }
