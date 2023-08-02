@@ -1,8 +1,8 @@
 resource "aws_iam_role" "cwl" {
   name = "${var.cloudwatch_stream_name}-CWLTOKINESIS"
 
-  assume_role_policy = <<EOF
-{
+  assume_role_policy = <<-EOT
+  {
     "Statement": {
       "Effect": "Allow",
       "Principal": {
@@ -11,6 +11,6 @@ resource "aws_iam_role" "cwl" {
       "Action": "sts:AssumeRole"
     },
     "Version": "2012-10-17"
-}
-EOF
+  }
+  EOT
 }

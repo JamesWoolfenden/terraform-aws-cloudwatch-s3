@@ -6,11 +6,12 @@ data "aws_iam_policy_document" "firehose" {
       "s3:GetObject",
       "s3:ListBucket",
       "s3:ListBucketMultipartUploads",
-      "s3:PutObject"
+      "s3:PutObject",
     ]
 
     resources = [
-      "${aws_s3_bucket.cloudwatch_bin.arn}",
-    "${aws_s3_bucket.cloudwatch_bin.arn}/*"]
+      "${aws_s3_bucket.log_bucket.arn}",
+      "${aws_s3_bucket.log_bucket.arn}/*",
+    ]
   }
 }
