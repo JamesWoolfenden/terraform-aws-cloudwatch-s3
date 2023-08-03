@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
         with:
           ref: master
           token: ${{ github.token }}
@@ -21,7 +21,7 @@ jobs:
           ./tfsec-linux-amd64 example/examplea -f json --out tfsec.json
         continue-on-error: true
       - name: store
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
         with:
           name: tfsec
           path: tfsec.json
@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
         with:
           ref: master
           token: ${{ github.token }}
@@ -42,7 +42,7 @@ jobs:
         run: checkov -d  example/examplea -o json | tee checkov.json
         continue-on-error: true
       - name: store
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
         with:
           name: checkov
           path: checkov.json
@@ -51,12 +51,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
         with:
           ref: master
           token: ${{ github.token }}
           fetch-depth: '0'
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@61a6322f88396a6271a6ee3565807d608ecaddd1 # v4.7.0
         with:
           python-version: 3.8
       - name: install terrascan
@@ -71,7 +71,7 @@ jobs:
           ./terrascan scan -d  example/examplea -o json -x json | tee terrascan.json
         continue-on-error: true
       - name: store
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
         with:
           name: terrascan
           path: terrascan.json
@@ -80,7 +80,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
         with:
           ref: master
           token: ${{ github.token }}
@@ -94,7 +94,7 @@ jobs:
         run: ./kics scan -p  example/examplea -o kics.json --report-formats json
         continue-on-error: true
       - name: store
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
         with:
           name: kics
           path: kics.json
@@ -106,17 +106,17 @@ jobs:
     steps:
       - name: Get Time
         id: time
-        uses: nanzm/get-time-action@v1.1
+        uses: nanzm/get-time-action@36103bd8a8b98bf8380c8e704e73c09b2fd8d98e # v2.0
         with:
           timeZone: 8
           format: "YYYY-MM-DD-HH-mm-ss"
       - name: mkdir
         run: |
           mkdir  tos3
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
         with:
           path: tos3
-      - uses: jakejarvis/s3-sync-action@master
+      - uses: jakejarvis/s3-sync-action@be0c4ab89158cac4278689ebedd8407dd5f35a83 # v0.5.1
         with:
           args: --acl public-read --follow-symlinks --delete
         env:

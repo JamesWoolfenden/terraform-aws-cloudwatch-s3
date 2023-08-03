@@ -51,3 +51,9 @@ variable "server_side_encryption" {
   description = "Encrypt at rest"
   default     = true
 }
+
+
+variable "s3_events" {
+  description = "Events to notify on"
+  default     = ["s3:ObjectRemoved:*"]
+}
