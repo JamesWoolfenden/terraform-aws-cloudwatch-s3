@@ -20,8 +20,7 @@ data "aws_iam_policy_document" "topic" {
 }
 
 resource "aws_sns_topic" "log_deletes" {
-  name   = local.sns_topic_name
-  policy = data.aws_iam_policy_document.topic.json
+  name              = local.sns_topic_name
+  policy            = data.aws_iam_policy_document.topic.json
   kms_master_key_id = var.kms_master_key_id
 }
-

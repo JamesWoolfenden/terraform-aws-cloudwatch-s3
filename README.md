@@ -125,7 +125,9 @@ resource "aws_iam_policy" "terraform_pike" {
                 "firehose:DescribeDeliveryStream",
                 "firehose:ListTagsForDeliveryStream"
             ],
-            "Resource": "*"
+            "Resource": [
+                "*"
+            ]
         },
         {
             "Sid": "VisualEditor1",
@@ -142,7 +144,9 @@ resource "aws_iam_policy" "terraform_pike" {
                 "iam:PassRole",
                 "iam:PutRolePolicy"
             ],
-            "Resource": "*"
+            "Resource": [
+                "*"
+            ]
         },
         {
             "Sid": "VisualEditor2",
@@ -152,7 +156,9 @@ resource "aws_iam_policy" "terraform_pike" {
                 "logs:DescribeSubscriptionFilters",
                 "logs:PutSubscriptionFilter"
             ],
-            "Resource": "*"
+            "Resource": [
+                "*"
+            ]
         },
         {
             "Sid": "VisualEditor3",
@@ -164,6 +170,7 @@ resource "aws_iam_policy" "terraform_pike" {
                 "s3:GetBucketAcl",
                 "s3:GetBucketCORS",
                 "s3:GetBucketLogging",
+                "s3:GetBucketNotification",
                 "s3:GetBucketObjectLockConfiguration",
                 "s3:GetBucketPolicy",
                 "s3:GetBucketPublicAccessBlock",
@@ -180,12 +187,30 @@ resource "aws_iam_policy" "terraform_pike" {
                 "s3:ListBucket",
                 "s3:PutBucketAcl",
                 "s3:PutBucketLogging",
+                "s3:PutBucketNotification",
                 "s3:PutBucketPolicy",
                 "s3:PutBucketPublicAccessBlock",
                 "s3:PutBucketVersioning",
-                "s3:PutEncryptionConfiguration"
+                "s3:PutEncryptionConfiguration",
+                "s3:PutLifecycleConfiguration"
             ],
-            "Resource": "*"
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "VisualEditor4",
+            "Effect": "Allow",
+            "Action": [
+                "sns:CreateTopic",
+                "sns:DeleteTopic",
+                "sns:GetTopicAttributes",
+                "sns:ListTagsForResource",
+                "sns:SetTopicAttributes"
+            ],
+            "Resource": [
+                "*"
+            ]
         }
     ]
 })
