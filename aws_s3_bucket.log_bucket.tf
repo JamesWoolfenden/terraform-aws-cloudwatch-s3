@@ -39,6 +39,38 @@ resource "aws_s3_bucket_versioning" "log_bucket" {
   }
 }
 
+resource "aws_s3_bucket_notification" "bucket_notification" {
+  bucket = aws_s3_bucket.log_bucket.id
+
+  topic {
+    topic_arn     = aws_sns_topic.log_deletes.arn
+    events        = var.s3_events
+    filter_suffix = ".log"
+  }
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "expire" {
+  bucket = aws_s3_bucket.log_bucket.bucket
+
+  rule {
+    id     = "Keep previous version 1 year"
+    status = "Enabled"
+
+    noncurrent_version_expiration {
+      noncurrent_days = 365
+    }
+  }
+
+  rule {
+    id     = "Delete old incomplete multi-part uploads"
+    status = "Enabled"
+
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 7
+    }
+  }
+}
+
 resource "aws_s3_bucket_ownership_controls" "this" {
   bucket = aws_s3_bucket.log_bucket.id
 
