@@ -5,6 +5,6 @@ module "cloudwatchtos3" {
   region_desc            = var.region_desc
   filter_pattern         = var.filter_pattern
   log_group_name         = [aws_cloudwatch_log_group.example.name]
-  log_bucket_logging     = "log-${var.log_bucket}"
-  kms_master_key_id      = aws_kms_key.example.arn
+  //log_bucket_logging     = "log-${var.log_bucket}"
+  kms_master_key_id = aws_kms_key.example.arn
 }

@@ -11,6 +11,7 @@ variable "log_bucket" {
 variable "log_bucket_logging" {
   description = "Access bucket logging."
   type        = string
+  default     = null
 }
 
 //If you set this as the default its going to make it

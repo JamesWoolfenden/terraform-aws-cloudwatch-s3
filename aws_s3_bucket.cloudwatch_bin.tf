@@ -1,5 +1,5 @@
 
-resource "aws_s3_bucket" "log_bucket" {
+resource "aws_s3_bucket" "cloudwatch_bin" {
   # tfsec:ignore:AWS077
   # checkov:skip=CKV_AWS_144: Not relevant
   # checkov:skip=CKV_AWS_21: "Ensure all data stored in the S3 bucket have versioning enabled"
@@ -10,8 +10,8 @@ resource "aws_s3_bucket" "log_bucket" {
   bucket = var.log_bucket
 }
 
-resource "aws_s3_bucket_server_side_encryption_configuration" "log_bucket" {
-  bucket = aws_s3_bucket.log_bucket.bucket
+resource "aws_s3_bucket_server_side_encryption_configuration" "cloudwatch_bin" {
+  bucket = aws_s3_bucket.cloudwatch_bin.bucket
 
   rule {
     apply_server_side_encryption_by_default {
@@ -21,22 +21,18 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "log_bucket" {
   }
 }
 
-resource "aws_s3_bucket_logging" "name" {
-  bucket = aws_s3_bucket.log_bucket.bucket
+// this would need an acl on var.log_bucket_logging to allow logging
+resource "aws_s3_bucket_logging" "cloudwatch_bin" {
+  count  = var.log_bucket_logging != null ? 1 : 0
+  bucket = aws_s3_bucket.cloudwatch_bin.bucket
 
   target_bucket = var.log_bucket_logging
-  target_prefix = "${aws_s3_bucket.log_bucket.bucket}/"
-
+  target_prefix = "${aws_s3_bucket.cloudwatch_bin.bucket}/"
 }
 
 
-resource "aws_s3_bucket_acl" "log_bucket" {
-  bucket = aws_s3_bucket.log_bucket.bucket
-  acl    = "log-delivery-write"
-}
-
-resource "aws_s3_bucket_versioning" "log_bucket" {
-  bucket = aws_s3_bucket.log_bucket.bucket
+resource "aws_s3_bucket_versioning" "cloudwatch_bin" {
+  bucket = aws_s3_bucket.cloudwatch_bin.bucket
 
   versioning_configuration {
     status     = "Disabled"
@@ -45,7 +41,7 @@ resource "aws_s3_bucket_versioning" "log_bucket" {
 }
 
 resource "aws_s3_bucket_notification" "bucket_notification" {
-  bucket = aws_s3_bucket.log_bucket.id
+  bucket = aws_s3_bucket.cloudwatch_bin.id
 
   topic {
     topic_arn     = aws_sns_topic.log_deletes.arn
@@ -55,7 +51,7 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "expire" {
-  bucket = aws_s3_bucket.log_bucket.bucket
+  bucket = aws_s3_bucket.cloudwatch_bin.bucket
 
   rule {
     id     = "Keep previous version 1 year"

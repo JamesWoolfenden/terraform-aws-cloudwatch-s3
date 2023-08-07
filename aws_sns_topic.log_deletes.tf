@@ -14,7 +14,7 @@ data "aws_iam_policy_document" "topic" {
     condition {
       test     = "ArnLike"
       variable = "aws:SourceArn"
-      values   = [aws_s3_bucket.log_bucket.arn]
+      values   = [aws_s3_bucket.cloudwatch_bin.arn]
     }
   }
 }
