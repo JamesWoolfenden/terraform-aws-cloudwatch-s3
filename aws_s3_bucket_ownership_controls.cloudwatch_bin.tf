@@ -1,4 +1,4 @@
-resource "aws_s3_bucket_ownership_controls" "logs" {
+resource "aws_s3_bucket_ownership_controls" "cloudwatch_bin" {
   bucket = aws_s3_bucket.cloudwatch_bin.id
 
   rule {

@@ -1,3 +1,7 @@
+moved {
+  from = aws_s3_bucket.log_bucket
+  to   = aws_s3_bucket.cloudwatch_bin
+}
 
 resource "aws_s3_bucket" "cloudwatch_bin" {
   # tfsec:ignore:AWS077
@@ -8,6 +12,11 @@ resource "aws_s3_bucket" "cloudwatch_bin" {
   # checkov:skip=CKV_AWS_145:v4 legacy
   # checkov:skip=CKV2_AWS_37:Faulty
   bucket = var.log_bucket
+}
+
+moved {
+  from = aws_s3_bucket_server_side_encryption_configuration.log_bucket
+  to   = aws_s3_bucket_server_side_encryption_configuration.cloudwatch_bin
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "cloudwatch_bin" {
@@ -21,6 +30,11 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "cloudwatch_bin" {
   }
 }
 
+moved {
+  from = aws_s3_bucket_logging.log_bucket
+  to   = aws_s3_bucket_logging.cloudwatch_bin
+}
+
 // this would need an acl on var.log_bucket_logging to allow logging
 resource "aws_s3_bucket_logging" "cloudwatch_bin" {
   count  = var.log_bucket_logging != null ? 1 : 0
@@ -30,6 +44,10 @@ resource "aws_s3_bucket_logging" "cloudwatch_bin" {
   target_prefix = "${aws_s3_bucket.cloudwatch_bin.bucket}/"
 }
 
+moved {
+  from = aws_s3_bucket_versioning.log_bucket
+  to   = aws_s3_bucket_versioning.cloudwatch_bin
+}
 
 resource "aws_s3_bucket_versioning" "cloudwatch_bin" {
   bucket = aws_s3_bucket.cloudwatch_bin.bucket
