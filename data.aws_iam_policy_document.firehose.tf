@@ -10,8 +10,8 @@ data "aws_iam_policy_document" "firehose" {
     ]
 
     resources = [
-      "${aws_s3_bucket.log_bucket.arn}",
-      "${aws_s3_bucket.log_bucket.arn}/*",
+      "${aws_s3_bucket.cloudwatch_bin.arn}",
+      "${aws_s3_bucket.cloudwatch_bin.arn}/*",
     ]
   }
 }

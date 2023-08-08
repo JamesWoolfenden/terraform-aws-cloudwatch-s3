@@ -89,18 +89,3 @@ resource "aws_s3_bucket_lifecycle_configuration" "expire" {
     }
   }
 }
-
-resource "aws_s3_bucket_ownership_controls" "this" {
-  bucket = aws_s3_bucket.log_bucket.id
-
-  rule {
-    object_ownership = "ObjectWriter"
-  }
-
-  # This `depends_on` is to prevent "A conflicting conditional operation is currently in progress against this resource."
-  depends_on = [
-    aws_s3_bucket_policy.log_bucket_policy,
-    aws_s3_bucket_public_access_block.bucket,
-    aws_s3_bucket.log_bucket
-  ]
-}
