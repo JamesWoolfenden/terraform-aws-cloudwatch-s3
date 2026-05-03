@@ -1,7 +1,5 @@
 ---
 # yamllint disable rule:line-length
-default_language_version:
-  python: python3.9
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # v6.0.0
@@ -38,9 +36,7 @@ repos:
     rev: ba5c36a3150a4184f9ee362a5cf11611ee9ae185 # v0.1.52
     hooks:
       - id: terraform-fmt
-        language_version: python3.9
       - id: tf2docs
-        language_version: python3.9
   - repo: https://github.com/bridgecrewio/checkov
     rev: e52a901a3829d818d20c9b75e544845c8b756968 # 3.2.526
     hooks:
