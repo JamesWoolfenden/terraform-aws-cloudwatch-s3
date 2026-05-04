@@ -1,4 +1,3 @@
-
 data "aws_iam_policy_document" "topic" {
   statement {
     effect = "Allow"
@@ -18,7 +17,6 @@ data "aws_iam_policy_document" "topic" {
     }
   }
 }
-
 resource "aws_sns_topic" "log_deletes" {
   name              = local.sns_topic_name
   policy            = data.aws_iam_policy_document.topic.json
