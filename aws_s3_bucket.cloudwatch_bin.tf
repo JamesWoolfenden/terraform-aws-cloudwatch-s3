@@ -1,4 +1,6 @@
 resource "aws_s3_bucket" "cloudwatch_bin" {
+  # checkov:skip=CKV2_AWS_61: Lifecycle configuration not required for this bucket
+  # checkov:skip=CKV2_AWS_62: Event notifications not required for this bucket
   # tfsec:ignore:AWS077
   # checkov:skip=CKV_AWS_144: Not relevant
   # checkov:skip=CKV_AWS_21: "Ensure all data stored in the S3 bucket have versioning enabled"
