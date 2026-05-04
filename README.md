@@ -120,7 +120,11 @@ resource "aws_iam_policy" "terraform_pike" {
             "Sid": "VisualEditor0",
             "Effect": "Allow",
             "Action": [
-                "ec2:DescribeAccountAttributes"
+                "firehose:CreateDeliveryStream",
+                "firehose:DeleteDeliveryStream",
+                "firehose:DescribeDeliveryStream",
+                "firehose:ListTagsForDeliveryStream",
+                "firehose:UpdateDestination"
             ],
             "Resource": [
                 "*"
@@ -128,19 +132,6 @@ resource "aws_iam_policy" "terraform_pike" {
         },
         {
             "Sid": "VisualEditor1",
-            "Effect": "Allow",
-            "Action": [
-                "firehose:CreateDeliveryStream",
-                "firehose:DeleteDeliveryStream",
-                "firehose:DescribeDeliveryStream",
-                "firehose:ListTagsForDeliveryStream"
-            ],
-            "Resource": [
-                "*"
-            ]
-        },
-        {
-            "Sid": "VisualEditor2",
             "Effect": "Allow",
             "Action": [
                 "iam:CreateRole",
@@ -159,7 +150,7 @@ resource "aws_iam_policy" "terraform_pike" {
             ]
         },
         {
-            "Sid": "VisualEditor3",
+            "Sid": "VisualEditor2",
             "Effect": "Allow",
             "Action": [
                 "logs:DeleteSubscriptionFilter",
@@ -171,17 +162,19 @@ resource "aws_iam_policy" "terraform_pike" {
             ]
         },
         {
-            "Sid": "VisualEditor4",
+            "Sid": "VisualEditor3",
             "Effect": "Allow",
             "Action": [
                 "s3:CreateBucket",
                 "s3:DeleteBucket",
+                "s3:DeleteBucketPolicy",
                 "s3:GetAccelerateConfiguration",
                 "s3:GetBucketAcl",
                 "s3:GetBucketCORS",
                 "s3:GetBucketLogging",
                 "s3:GetBucketNotification",
                 "s3:GetBucketObjectLockConfiguration",
+                "s3:GetBucketOwnershipControls",
                 "s3:GetBucketPolicy",
                 "s3:GetBucketPublicAccessBlock",
                 "s3:GetBucketRequestPayment",
@@ -189,7 +182,6 @@ resource "aws_iam_policy" "terraform_pike" {
                 "s3:GetBucketVersioning",
                 "s3:GetBucketWebsite",
                 "s3:GetEncryptionConfiguration",
-                "s3:GetIntelligentTieringConfiguration",
                 "s3:GetLifecycleConfiguration",
                 "s3:GetObject",
                 "s3:GetObjectAcl",
@@ -197,11 +189,11 @@ resource "aws_iam_policy" "terraform_pike" {
                 "s3:ListBucket",
                 "s3:PutBucketLogging",
                 "s3:PutBucketNotification",
+                "s3:PutBucketOwnershipControls",
                 "s3:PutBucketPolicy",
                 "s3:PutBucketPublicAccessBlock",
                 "s3:PutBucketVersioning",
                 "s3:PutEncryptionConfiguration",
-                "s3:PutIntelligentTieringConfiguration",
                 "s3:PutLifecycleConfiguration"
             ],
             "Resource": [
@@ -209,7 +201,7 @@ resource "aws_iam_policy" "terraform_pike" {
             ]
         },
         {
-            "Sid": "VisualEditor5",
+            "Sid": "VisualEditor4",
             "Effect": "Allow",
             "Action": [
                 "sns:CreateTopic",

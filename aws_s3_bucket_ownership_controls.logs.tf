@@ -2,7 +2,7 @@ resource "aws_s3_bucket_ownership_controls" "logs" {
   bucket = aws_s3_bucket.cloudwatch_bin.id
 
   rule {
-    object_ownership = "ObjectWriter"
+    object_ownership = "BucketOwnerEnforced"
   }
 
   depends_on = [
