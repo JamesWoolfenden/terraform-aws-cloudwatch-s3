@@ -1,15 +1,7 @@
 resource "aws_s3_bucket" "cloudwatch_bin" {
-  # checkov:skip=CKV2_AWS_61: Lifecycle configuration not required for this bucket
-  # checkov:skip=CKV2_AWS_62: Event notifications not required for this bucket
-  # tfsec:ignore:AWS077
-  # checkov:skip=CKV_AWS_144: Not relevant
-  # checkov:skip=CKV_AWS_21: "Ensure all data stored in the S3 bucket have versioning enabled"
-  # checkov:skip=CKV_AWS_18: "Ensure the S3 bucket has access logging enabled"
-  # checkov:skip=CKV_AWS_19:v4 legacy
-  # checkov:skip=CKV_AWS_145:v4 legacy
-  # checkov:skip=CKV2_AWS_37:Faulty
   bucket = var.log_bucket
 }
+
 resource "aws_s3_bucket_server_side_encryption_configuration" "cloudwatch_bin" {
   bucket = aws_s3_bucket.cloudwatch_bin.bucket
 
@@ -20,14 +12,14 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "cloudwatch_bin" {
     }
   }
 }
-# this would need an acl on var.log_bucket_logging to allow logging
+
 resource "aws_s3_bucket_logging" "cloudwatch_bin" {
-  count  = var.log_bucket_logging != null ? 1 : 0
   bucket = aws_s3_bucket.cloudwatch_bin.bucket
 
-  target_bucket = var.log_bucket_logging
+  target_bucket = aws_s3_bucket.access_logs.bucket
   target_prefix = "${aws_s3_bucket.cloudwatch_bin.bucket}/"
 }
+
 resource "aws_s3_bucket_versioning" "cloudwatch_bin" {
   bucket = aws_s3_bucket.cloudwatch_bin.bucket
 
@@ -36,26 +28,18 @@ resource "aws_s3_bucket_versioning" "cloudwatch_bin" {
     mfa_delete = var.log_bucket_mfa_delete
   }
 }
+
 resource "aws_s3_bucket_notification" "log_deletes" {
   bucket = aws_s3_bucket.cloudwatch_bin.id
 
   topic {
-    topic_arn     = aws_sns_topic.log_deletes.arn
-    events        = var.s3_events
-    filter_suffix = ".log"
+    topic_arn = aws_sns_topic.log_deletes.arn
+    events    = var.s3_events
   }
 }
+
 resource "aws_s3_bucket_lifecycle_configuration" "expire" {
   bucket = aws_s3_bucket.cloudwatch_bin.bucket
-
-  rule {
-    id     = "Keep previous version 1 year"
-    status = "Enabled"
-
-    noncurrent_version_expiration {
-      noncurrent_days = 365
-    }
-  }
 
   rule {
     id     = "Delete old incomplete multi-part uploads"
@@ -63,6 +47,28 @@ resource "aws_s3_bucket_lifecycle_configuration" "expire" {
 
     abort_incomplete_multipart_upload {
       days_after_initiation = 7
+    }
+  }
+
+  rule {
+    id     = "Age out delivered logs"
+    status = "Enabled"
+
+    dynamic "transition" {
+      for_each = local.log_transitions
+
+      content {
+        days          = transition.value
+        storage_class = "STANDARD_IA"
+      }
+    }
+
+    dynamic "expiration" {
+      for_each = local.log_expirations
+
+      content {
+        days = expiration.value
+      }
     }
   }
 }

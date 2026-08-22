@@ -51,3 +51,13 @@ suppressions:
     policy_id: HLD_AWS_310
     reason: "Object Lock requires versioning, which is deliberately Disabled, and can only be set at bucket creation. See the module's own suppression."
     approved_by: james.woolfenden
+
+  - module: module.cloudwatchtos3
+    policy_id: HLD_AWS_318
+    reason: "Deletion protection on the module's Firehose error log group would block teardown of both the module and this example. See the module's own suppression."
+    approved_by: james.woolfenden
+
+  - module: module.cloudwatchtos3
+    policy_id: HLD_AWS_144
+    reason: "aws_s3_bucket.access_logs is itself the module's server-access-log target; the chain has to terminate there. See the module's own suppression."
+    approved_by: james.woolfenden

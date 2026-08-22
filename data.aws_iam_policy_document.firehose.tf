@@ -1,7 +1,4 @@
 data "aws_iam_policy_document" "firehose" {
-  # checkov:skip=CKV_AWS_356: IAM policy requires broad access for this module to function
-  # checkov:skip=CKV_AWS_290: IAM policy requires broad write access for this module to function
-  # checkov:skip=CKV_AWS_355: IAM policy requires wildcard resource for this module to function
   statement {
     actions = [
       "s3:AbortMultipartUpload",
@@ -15,5 +12,11 @@ data "aws_iam_policy_document" "firehose" {
     resources = [
       "${aws_s3_bucket.cloudwatch_bin.arn}",
     "${aws_s3_bucket.cloudwatch_bin.arn}/*"]
+  }
+
+  statement {
+    sid       = "WriteDeliveryErrors"
+    actions   = ["logs:PutLogEvents"]
+    resources = ["${aws_cloudwatch_log_group.firehose_errors.arn}:log-stream:${aws_cloudwatch_log_stream.firehose_errors.name}"]
   }
 }

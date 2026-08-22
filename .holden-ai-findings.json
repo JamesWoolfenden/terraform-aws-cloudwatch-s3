@@ -1,0 +1,147 @@
+{
+  "findings": [
+    {
+      "confidence": "high",
+      "explanation": "The heredoc is a bare statement object -- no Version, no Statement array -- so it is not a policy document at all. AWS rejects it with MalformedPolicyDocumentException, meaning this example has never applied in its current form (the checked-in state file is empty). The second-order effect is worse: HLD_AWS_292 (wildcard principal, CRITICAL) and HLD_AWS_317 (CloudWatch Logs encryption context, HIGH) both json_decode the policy and index into Statement. With no Statement key they return Unknown rather than a verdict, so a key granting kms:* silently escapes both checks. Confirmed with a controlled fixture: the same bare-statement policy with no interpolation at all still drives both checks to UNKNOWN, while the well-formed equivalent evaluates to PASS -- so the malformed shape alone is sufficient to cause the abstention, independent of the interpolated account ID.",
+      "file": "example/examplea/aws_kms_key.example.tf",
+      "first_seen": "2026-08-22",
+      "fix": "  policy = jsonencode({\n    Version = \"2012-10-17\"\n    Statement = [\n      {\n        Sid       = \"EnableIAMUserPermissions\"\n        Effect    = \"Allow\"\n        Principal = { AWS = \"arn:aws:iam::${data.aws_caller_identity.current.account_id}:root\" }\n        Action    = \"kms:*\"\n        Resource  = \"*\"\n      },\n      {\n        Sid       = \"AllowCloudWatchLogs\"\n        Effect    = \"Allow\"\n        Principal = { Service = \"logs.${data.aws_region.current.region}.amazonaws.com\" }\n        Action = [\n          \"kms:Encrypt*\",\n          \"kms:Decrypt*\",\n          \"kms:ReEncrypt*\",\n          \"kms:GenerateDataKey*\",\n          \"kms:Describe*\"\n        ]\n        Resource = \"*\"\n        Condition = {\n          ArnLike = {\n            \"kms:EncryptionContext:aws:logs:arn\" = \"arn:aws:logs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:log-group:*\"\n          }\n        }\n      }\n    ]\n  })",
+      "fixable": true,
+      "id": "HOLDEN_AI_001",
+      "last_seen": "2026-08-22",
+      "line": 4,
+      "principle": "key-management",
+      "related_resources": [],
+      "remediation": "Wrap the statement in a real policy document. The fix below also adds the CloudWatch Logs grant required by HOLDEN_AI_002, with the encryption-context condition HLD_AWS_317 expects.",
+      "resource": "aws_kms_key.example",
+      "severity": "HIGH",
+      "status": "fixed",
+      "suppression_reason": null,
+      "title": "KMS key policy is not a valid policy document, and its malformed shape silences a CRITICAL and a HIGH holden check"
+    },
+    {
+      "confidence": "high",
+      "explanation": "CloudWatch Logs cannot use a customer-managed key unless the key policy explicitly grants logs.<region>.amazonaws.com -- an IAM grant to the account root is not sufficient, because the service calls KMS as itself rather than as a principal in the account. This key policy has only the root statement. Two log groups consume it: aws_cloudwatch_log_group.example directly, and module.cloudwatchtos3.aws_cloudwatch_log_group.firehose_errors transitively, because the example passes this key as kms_master_key_id and the module now uses that variable for its Firehose error log group. No deterministic rule catches it: the chain runs key -> module argument -> module variable -> log group attribute, across a module boundary, and HLD_AWS_317 asks the inverse question (if logs IS granted, is there an encryption context) so it stays silent when logs is granted nothing at all.",
+      "file": "example/examplea/aws_kms_key.example.tf",
+      "first_seen": "2026-08-22",
+      "fixable": false,
+      "id": "HOLDEN_AI_002",
+      "last_seen": "2026-08-22",
+      "line": 4,
+      "principle": "key-management",
+      "related_resources": [
+        "aws_cloudwatch_log_group.example",
+        "module.cloudwatchtos3.aws_cloudwatch_log_group.firehose_errors",
+        "module.cloudwatchtos3.var.kms_master_key_id"
+      ],
+      "remediation": "Apply the HOLDEN_AI_001 fix, which adds the logs grant. Separately, document on var.kms_master_key_id that the key policy must grant the CloudWatch Logs service principal -- the module imposes that requirement on every caller and cannot enforce it.",
+      "resource": "aws_kms_key.example",
+      "severity": "HIGH",
+      "status": "fixed",
+      "suppression_reason": null,
+      "title": "Two CloudWatch log groups encrypt with a CMK whose policy grants only the account root, so log group creation fails"
+    },
+    {
+      "confidence": "high",
+      "explanation": "The module encrypts at four points. Three -- S3 SSE, the SNS topic, the Firehose error log group -- take the CMK unconditionally. The fourth, server_side_encryption.enabled on the delivery stream, is wired to var.server_side_encryption, a plain bool with no validation and no warning in its description. A caller setting it to false disables encryption on the in-flight buffer while every other component stays encrypted, and the attribute is still present, so HLD_AWS_045, HLD_AWS_382 and HLD_AWS_383 all continue to pass -- the engine resolves the default and never sees the caller's value. This is the same shape as the ssl_mode ternary that HLD_TF_063's own rationale cites as a silent opt-out of encryption.",
+      "file": "aws_kinesis_stream.extended_s3_stream.tf",
+      "first_seen": "2026-08-22",
+      "fixable": false,
+      "id": "HOLDEN_AI_003",
+      "last_seen": "2026-08-22",
+      "line": 11,
+      "principle": "encryption",
+      "related_resources": [
+        "var.server_side_encryption",
+        "aws_s3_bucket_server_side_encryption_configuration.cloudwatch_bin",
+        "aws_sns_topic.log_deletes",
+        "aws_cloudwatch_log_group.firehose_errors"
+      ],
+      "remediation": "Either drop the toggle and encrypt unconditionally like the other three, or keep it and say plainly in the description that setting it false disables encryption at rest for buffered records. The inconsistency, not the toggle itself, is what makes this hard to notice.",
+      "resource": "aws_kinesis_firehose_delivery_stream.extended_s3_stream",
+      "severity": "MEDIUM",
+      "status": "open",
+      "suppression_reason": null,
+      "title": "Firehose is the only encryption point a caller can switch off, and no rule can see it because the value is a variable",
+      "unresolved_since": "2026-08-22"
+    },
+    {
+      "confidence": "medium",
+      "explanation": "This document is attached to aws_iam_role.cwl as an inline role policy, so its statements are permissions the role itself holds. A subscription filter with a Firehose destination is not a PassRole flow: CloudWatch Logs assumes the role directly via the trust policy, and iam:PassRole is needed by the principal that creates the filter -- the Terraform deployer -- not by the role being assumed. The grant is therefore self-referential and unexercised. It is scoped tightly (the role's own ARN, plus an iam:PassedToService condition), so the risk is small, but it is privilege that exists for no call path and will outlive anyone's memory of why it was added.",
+      "file": "data.aws_iam_policy_document.cloudwatch.tf",
+      "first_seen": "2026-08-22",
+      "fixable": false,
+      "id": "HOLDEN_AI_004",
+      "last_seen": "2026-08-22",
+      "line": 14,
+      "principle": "identity-and-access",
+      "related_resources": [
+        "aws_iam_role.cwl",
+        "aws_iam_role_policy.permissionsforcwl",
+        "aws_cloudwatch_log_subscription_filter.filters"
+      ],
+      "remediation": "Remove the PassDeliveryStreamRole statement and confirm a full plan/apply of example/examplea still delivers. Keeping it needs a comment naming the call that uses it.",
+      "resource": "data.aws_iam_policy_document.cloudwatch",
+      "severity": "LOW",
+      "status": "open",
+      "suppression_reason": null,
+      "title": "The CloudWatch Logs role grants itself iam:PassRole for a call this architecture never makes",
+      "unresolved_since": "2026-08-22"
+    }
+  ],
+  "scan_date": "2026-08-22T20:30:00Z",
+  "scan_path": ". example/examplea",
+  "suggested_policies": [
+    {
+      "rationale": "An inline JSON policy attribute that is not a policy document -- missing Version or Statement -- causes every policy that json_decodes it to return Unknown rather than a verdict. On aws_kms_key that silently disables HLD_AWS_292 (CRITICAL) and HLD_AWS_317 (HIGH). The failure is invisible in a normal scan because Unknown does not appear in the failed count. This check turns that silent abstention into a Fail. Verified empirically against a two-key fixture: FAIL on the bare-statement document, PASS on the well-formed one, and holden validate-policy reports OK. No existing policy covers well-formedness -- HLD_AWS_214 checks only that a key policy is present.",
+      "status": "implemented as HLD_AWS_385 (holden commit 83b7ebd)",
+      "yaml": "id: HLD_AWS_385\nname: Inline JSON policy documents must be well-formed policy documents\nprinciple: key-management\nseverity: MEDIUM\nrationale: |\n  A policy attribute holding JSON that is not a policy document -- a bare\n  statement object with no Version and no Statement array -- is rejected by AWS\n  at apply time. More dangerously, it is also invisible to static analysis:\n  every policy that json_decodes the attribute and indexes into Statement finds\n  nothing, and returns Unknown rather than a verdict. On a KMS key that silently\n  disables the wildcard-principal check; on a bucket or topic policy it disables\n  every statement-level check at once.\n\n  Unknown does not appear in a scan's failed count, so the gap is not merely\n  undetected -- it reads as clean.\nremediation: |\n  Wrap statements in a real policy document, and prefer jsonencode over a\n  heredoc so the structure is checked by Terraform rather than by eye:\n\n    policy = jsonencode({\n      Version = \"2012-10-17\"\n      Statement = [{\n        Sid       = \"EnableIAMUserPermissions\"\n        Effect    = \"Allow\"\n        Principal = { AWS = \"arn:aws:iam::${data.aws_caller_identity.current.account_id}:root\" }\n        Action    = \"kms:*\"\n        Resource  = \"*\"\n      }]\n    })\nresources:\n  aws_kms_key:\n    all:\n      - path: policy\n        json_decode: true\n        sub_path: Version\n        not_empty: true\n      - path: policy\n        json_decode: true\n        sub_path: Statement\n        not_empty: true\n  aws_s3_bucket_policy:\n    all:\n      - path: policy\n        json_decode: true\n        sub_path: Version\n        not_empty: true\n      - path: policy\n        json_decode: true\n        sub_path: Statement\n        not_empty: true\n  aws_sns_topic:\n    all:\n      - path: policy\n        json_decode: true\n        sub_path: Version\n        not_empty: true\n      - path: policy\n        json_decode: true\n        sub_path: Statement\n        not_empty: true\n"
+    },
+    {
+      "blocked_by": "False positive on the idiomatic form. Verified in isolation: with Principal.Service = \"logs.${data.aws_region.current.region}.amazonaws.com\" the any_in/matches condition returns Fail, not Unknown; with a hardcoded region it returns Pass. jsonencode itself decodes fine, so the defect is that a partially-known string value inside a json_decoded document is not routed through holden partial-string machinery -- note tests/fixtures/inline-json-policy-partial-resolution shows that machinery does work for resolvable SIBLING fields, so the gap is specifically partially-known string values, not JSON decoding generally. Shipping this as-is would fail every correctly-configured key that interpolates its region, which is essentially all of them.",
+      "rationale": "CloudWatch Logs cannot use a customer-managed key unless the key policy grants logs.<region>.amazonaws.com directly -- an account-root grant does not work, because the service calls KMS as itself. A log group pointing kms_key_id at such a key fails to create. HLD_AWS_317 asks the inverse question (given a logs grant, is there an encryption context) so it stays silent when logs is granted nothing. Expressible with the existing references DSL; holden validate-policy reports OK on the structure below.",
+      "status": "NOT shipped",
+      "yaml": "id: HLD_PROPOSED_002\nname: CloudWatch log group CMKs must grant the CloudWatch Logs service principal\nprinciple: key-management\nseverity: HIGH\nrationale: |\n  Associating a customer-managed key with a log group requires the key policy to\n  grant logs.<region>.amazonaws.com the encrypt, decrypt, re-encrypt, generate\n  and describe actions. CloudWatch Logs calls KMS as the service, not as a\n  principal in the account, so kms:* granted to the account root does not reach\n  it. Without the grant the log group simply fails to create, and because the\n  key looks correct in isolation the failure is usually blamed on the log group.\n\n  HLD_AWS_317 covers the opposite half of this: given that a key grants the logs\n  service, it must scope the grant with an encryption context. Neither rule\n  notices a key that grants the logs service nothing at all while a log group\n  depends on it.\nremediation: |\n  Add a statement for the logs service principal, scoped by encryption context:\n\n    {\n      Sid       = \"AllowCloudWatchLogs\"\n      Effect    = \"Allow\"\n      Principal = { Service = \"logs.${data.aws_region.current.region}.amazonaws.com\" }\n      Action    = [\"kms:Encrypt*\", \"kms:Decrypt*\", \"kms:ReEncrypt*\", \"kms:GenerateDataKey*\", \"kms:Describe*\"]\n      Resource  = \"*\"\n      Condition = {\n        ArnLike = {\n          \"kms:EncryptionContext:aws:logs:arn\" = \"arn:aws:logs:REGION:ACCOUNT:log-group:*\"\n        }\n      }\n    }\nresources:\n  aws_cloudwatch_log_group:\n    references:\n      via: kms_key_id\n      type: aws_kms_key\n      must:\n        path: policy\n        json_decode: true\n        sub_path: Statement\n        any_in:\n          path: Principal.Service\n          matches: '^logs[.]'\n"
+    }
+  ],
+  "suggested_suppressions": [],
+  "unresolved_review": {
+    "confirmed_safe": 2,
+    "detail": [
+      {
+        "became": "HOLDEN_AI_001",
+        "policy_id": "HLD_AWS_292",
+        "resource": "aws_kms_key.example",
+        "verdict": "resolved_to_finding"
+      },
+      {
+        "became": "HOLDEN_AI_001 / HOLDEN_AI_002",
+        "policy_id": "HLD_AWS_317",
+        "resource": "aws_kms_key.example",
+        "verdict": "resolved_to_finding"
+      },
+      {
+        "policy_id": "HLD_AWS_271",
+        "reasoning": "The rule fires on statements with principals.type == \"*\" plus a condition. This is an identity policy attached to a role and declares no principals block at all, so principals.type is absent and the guard cannot be evaluated -- hence Unknown. The wildcard-principal-scoped-by-condition scenario does not exist here. The sibling data.aws_iam_policy_document.topic does declare principals (Service = s3.amazonaws.com) and resolves to Pass.",
+        "resource": "data.aws_iam_policy_document.cloudwatch",
+        "verdict": "confirmed_safe"
+      },
+      {
+        "policy_id": "HLD_TF_082",
+        "reasoning": "The variable declares no default, so there is nothing to place-hold. It only lands on Unknown because holden evaluates it through the module call, where the argument is aws_kms_key.example.arn -- a reference rather than a literal.",
+        "resource": "module.cloudwatchtos3.var.kms_master_key_id",
+        "verdict": "confirmed_safe"
+      },
+      {
+        "policy_id": "HLD_AWS_308",
+        "reasoning": "The rule asks whether the server-access-log target bucket uses SSE-KMS. The target is var.log_bucket_logging, a caller-supplied bucket name for a bucket this module does not manage and cannot see. The resource is also count-gated to zero by default. Nothing in this repo can settle it; it depends entirely on what a consumer passes.",
+        "resource": "aws_s3_bucket_logging.cloudwatch_bin",
+        "verdict": "still_unresolvable"
+      }
+    ],
+    "resolved_to_finding": 2,
+    "reviewed": 7,
+    "still_unresolvable": 1,
+    "unique": 5
+  }
+}
