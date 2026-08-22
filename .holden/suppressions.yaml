@@ -8,3 +8,33 @@ suppressions:
     resource_id: aws_s3_bucket.cloudwatch_bin
     reason: "Object Lock requires versioning, which this log-sink bucket deliberately leaves Disabled (see HLD_AWS_281 suppression). object_lock_enabled can also only be set at bucket creation, so adding it would force replacement of every existing deployment's bucket."
     approved_by: james.woolfenden
+
+  - policy_id: HLD_AWS_318
+    resource_id: aws_cloudwatch_log_group.firehose_errors
+    reason: "Deletion protection would make this module impossible to destroy. The log group holds Firehose delivery errors and is created and torn down with the pipeline it belongs to; its lifetime is the module's lifetime, not an independent retention decision. Retention is bounded instead by var.firehose_error_log_retention_days."
+    approved_by: james.woolfenden
+
+  - policy_id: HLD_TF_073
+    resource_id: workspace
+    reason: "16 resource types is this module's stated scope: one CloudWatch-Logs-to-S3 delivery pipeline whose parts (bucket plus its configuration resources, Firehose and its error log group, two IAM roles and their policies, SNS notification) cannot be applied independently. Mirrors the module-scoped suppression in example/examplea."
+    approved_by: james.woolfenden
+
+  - policy_id: HLD_AWS_144
+    resource_id: aws_s3_bucket.access_logs
+    reason: "This is itself the server-access-log target for aws_s3_bucket.cloudwatch_bin. Giving it a log target would need a fourth bucket with the same requirement, and so on; the chain has to terminate and the access-log bucket is the conventional place. S3 permits self-logging but it generates log records about log deliveries indefinitely."
+    approved_by: james.woolfenden
+
+  - policy_id: HLD_AWS_281
+    resource_id: aws_s3_bucket_versioning.access_logs
+    reason: "Versioning is deliberately Disabled, matching aws_s3_bucket_versioning.cloudwatch_bin. S3 writes each access-log object once and never modifies it, so there are no noncurrent versions to retain; retention is bounded by the bucket lifecycle rules instead."
+    approved_by: james.woolfenden
+
+  - policy_id: HLD_AWS_310
+    resource_id: aws_s3_bucket.access_logs
+    reason: "Object Lock requires versioning, which this bucket deliberately leaves Disabled, and can only be set at bucket creation. Same rationale as aws_s3_bucket.cloudwatch_bin."
+    approved_by: james.woolfenden
+
+  - policy_id: HLD_TF_029
+    resource_id: workspace
+    reason: "The permission count is the module's own footprint: one CloudWatch-Logs-to-S3 pipeline plus the server-access-log target it owns. Splitting it would stop the module delivering the thing it exists to deliver."
+    approved_by: james.woolfenden

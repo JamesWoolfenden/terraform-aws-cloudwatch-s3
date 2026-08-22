@@ -19,7 +19,7 @@ variable "log_bucket" {
 }
 
 variable "log_bucket_logging" {
-  description = "Access bucket logging."
+  description = "Name for the server-access-log bucket this module creates. Defaults to \"LOG_BUCKET-access-logs\". This is a name to assign, not an existing bucket: the module owns the target so it can guarantee the encryption, bucket policy and ownership settings that log delivery requires."
   type        = string
   default     = null
 
@@ -64,7 +64,7 @@ variable "region_desc" {
 
 variable "log_group_name" {
   description = "A log group to stream"
-  type        = list(any)
+  type        = list(string)
 
   validation {
     condition     = length(var.log_group_name) > 0
@@ -88,9 +88,13 @@ variable "sse_algorithm" {
   }
 }
 
+# The module encrypts a CloudWatch log group with this key. CloudWatch Logs
+# calls KMS as the service principal, so the key policy must grant
+# logs.REGION.amazonaws.com directly — an IAM grant to the account root does
+# not reach it, and the log group will fail to create.
 variable "kms_master_key_id" {
   type        = string
-  description = "The KMS key id to use for Encryption"
+  description = "The KMS key id to use for Encryption. Its key policy must grant the CloudWatch Logs service principal (logs.REGION.amazonaws.com) encrypt/decrypt/describe, since the module encrypts a log group with it."
 
   validation {
     condition     = can(regex("^(arn:aws[a-zA-Z-]*:kms:[a-z0-9-]+:[0-9]{12}:(key|alias)/.+|alias/.+|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$", var.kms_master_key_id))
@@ -112,5 +116,38 @@ variable "s3_events" {
   validation {
     condition     = length(var.s3_events) > 0 && alltrue([for event in var.s3_events : can(regex("^s3:[A-Za-z]+:", event))])
     error_message = "Each s3_events entry must be an S3 event type such as s3:ObjectRemoved:* or s3:ObjectCreated:Put."
+  }
+}
+
+variable "firehose_error_log_retention_days" {
+  description = "Retention in days for the CloudWatch log group holding Firehose delivery errors."
+  type        = number
+  default     = 365
+
+  validation {
+    condition     = contains([1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1096, 1827, 2192, 2557, 2922, 3288, 3653], var.firehose_error_log_retention_days)
+    error_message = "The firehose_error_log_retention_days must be one of the retention periods CloudWatch Logs accepts."
+  }
+}
+
+variable "log_transition_days" {
+  description = "Days before a delivered log object transitions to the STANDARD_IA storage class. Set to null to skip the transition."
+  type        = number
+  default     = 30
+
+  validation {
+    condition     = var.log_transition_days == null || var.log_transition_days >= 30
+    error_message = "The log_transition_days must be null or at least 30; S3 bills a minimum 30-day duration for STANDARD_IA regardless of when the object transitions."
+  }
+}
+
+variable "log_expiration_days" {
+  description = "Days before a delivered log object is deleted. Set to null to retain objects indefinitely."
+  type        = number
+  default     = 365
+
+  validation {
+    condition     = var.log_expiration_days == null || var.log_expiration_days > 0
+    error_message = "The log_expiration_days must be null or greater than zero."
   }
 }

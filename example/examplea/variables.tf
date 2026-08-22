@@ -39,21 +39,11 @@ variable "region_desc" {
 }
 
 variable "log_group_name" {
-  type        = list(any)
+  type        = list(string)
   description = "The name of the log group to stream"
 
   validation {
     condition     = length(var.log_group_name) > 0
     error_message = "The log_group_name must contain at least one log group name."
-  }
-}
-
-variable "common_tags" {
-  type        = map(any)
-  description = "Supplied to provider default tags"
-
-  validation {
-    condition     = length(var.common_tags) > 0
-    error_message = "The common_tags map must contain at least one tag."
   }
 }

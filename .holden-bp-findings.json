@@ -1,0 +1,116 @@
+{
+  "findings": [
+    {
+      "confidence": "high",
+      "explanation": "The notification is filtered to keys ending in \".log\", but every object in this bucket is written by aws_kinesis_firehose_delivery_stream.extended_s3_stream, whose extended_s3_configuration sets no prefix and no file_extension. Firehose names objects <stream>-<version>-<timestamp>-<uuid> with no extension at all. The suffix filter therefore matches nothing, so the SNS topic, its policy, and the whole log_deletes notification path are dead config that will never fire on the s3:ObjectRemoved:* events they exist to report.",
+      "file": "aws_s3_bucket.cloudwatch_bin.tf",
+      "first_seen": "2026-08-22",
+      "fix": "resource \"aws_s3_bucket_notification\" \"log_deletes\" {\n  bucket = aws_s3_bucket.cloudwatch_bin.id\n\n  topic {\n    topic_arn = aws_sns_topic.log_deletes.arn\n    events    = var.s3_events\n  }\n}",
+      "fixable": true,
+      "id": "HOLDEN_BP_001",
+      "last_seen": "2026-08-22",
+      "line": 36,
+      "principle": "reliability",
+      "remediation": "Either drop filter_suffix so the notification matches every object, or expose it as a variable so a caller who sets a Firehose file_extension can align the two. Dropping it is the correct default for this module, since it owns the only writer.",
+      "resource": "aws_s3_bucket_notification.log_deletes",
+      "severity": "MEDIUM",
+      "status": "fixed",
+      "title": "S3 notification filter_suffix \".log\" can never match objects this module's own Firehose writes"
+    },
+    {
+      "confidence": "high",
+      "explanation": "The two rules cover noncurrent versions and aborted multipart uploads. Neither touches current object versions, so every log object Firehose delivers stays in S3 Standard forever. This is a CloudWatch log sink -- the one workload where unbounded accumulation is guaranteed rather than hypothetical -- and the module exposes no variable to bound it, so no consumer can fix it without forking. HLD_AWS_114 passes here because it only checks that a lifecycle configuration exists at all.",
+      "file": "aws_s3_bucket.cloudwatch_bin.tf",
+      "first_seen": "2026-08-22",
+      "fixable": false,
+      "id": "HOLDEN_BP_002",
+      "last_seen": "2026-08-22",
+      "line": 39,
+      "principle": "cost",
+      "remediation": "Add a transition to a colder class and an expiration, both driven by variables so callers can set their own retention. STANDARD_IA at 30 days and GLACIER_IR at 90 is the usual shape for log data that is occasionally queried.",
+      "resource": "aws_s3_bucket_lifecycle_configuration.expire",
+      "severity": "MEDIUM",
+      "status": "fixed",
+      "title": "Log bucket lifecycle never expires or transitions current object versions"
+    },
+    {
+      "confidence": "high",
+      "explanation": "aws_s3_bucket_versioning.cloudwatch_bin sets status = \"Disabled\", a deliberate decision recorded in .holden/suppressions.yaml. A bucket without versioning never has a noncurrent version, so the \"Keep previous version 1 year\" rule can never act on anything. It reads as retention coverage that does not exist, which is worse than no rule at all -- a future reader checking whether this bucket bounds its storage sees a 365-day rule and stops looking.",
+      "file": "aws_s3_bucket.cloudwatch_bin.tf",
+      "first_seen": "2026-08-22",
+      "fix": "  rule {\n    id     = \"Delete old incomplete multi-part uploads\"\n    status = \"Enabled\"\n\n    abort_incomplete_multipart_upload {\n      days_after_initiation = 7\n    }\n  }",
+      "fixable": true,
+      "id": "HOLDEN_BP_003",
+      "last_seen": "2026-08-22",
+      "line": 46,
+      "principle": "maintainability",
+      "remediation": "Delete the rule, or comment it to tie its inertness to the versioning decision. Deleting is cleaner given HOLDEN_BP_002 would add a real expiration rule.",
+      "resource": "aws_s3_bucket_lifecycle_configuration.expire",
+      "severity": "LOW",
+      "status": "fixed",
+      "title": "noncurrent_version_expiration rule is dead config while versioning is Disabled"
+    },
+    {
+      "confidence": "high",
+      "explanation": "extended_s3_configuration declares no cloudwatch_logging_options block, which defaults to disabled. When Firehose cannot write to S3 -- KMS key denied, bucket policy changed, role permissions drifted -- there is no error record anywhere. The failure surfaces only as logs quietly not arriving, which is exactly the signal this module exists to provide and the one nobody is monitoring.",
+      "file": "aws_kinesis_stream.extended_s3_stream.tf",
+      "first_seen": "2026-08-22",
+      "fix": "  extended_s3_configuration {\n    role_arn   = aws_iam_role.firehosetos3.arn\n    bucket_arn = aws_s3_bucket.cloudwatch_bin.arn\n\n    cloudwatch_logging_options {\n      enabled         = true\n      log_group_name  = aws_cloudwatch_log_group.firehose_errors.name\n      log_stream_name = \"S3Delivery\"\n    }\n  }",
+      "fixable": true,
+      "id": "HOLDEN_BP_004",
+      "last_seen": "2026-08-22",
+      "line": 5,
+      "principle": "reliability",
+      "remediation": "Enable delivery error logging to a CloudWatch log group and stream so failures produce an alertable record.",
+      "resource": "aws_kinesis_firehose_delivery_stream.extended_s3_stream",
+      "severity": "MEDIUM",
+      "status": "fixed",
+      "title": "Firehose delivery stream has no cloudwatch_logging_options, so delivery failures are silent"
+    },
+    {
+      "confidence": "high",
+      "explanation": "log_group_name is list(any) in both the module and example/examplea, and common_tags is map(any) in the example. Every consumer of log_group_name treats it as strings -- toset() into for_each, and the log group name attribute -- so `any` buys nothing and disables the type error a caller would otherwise get at plan time for a list of numbers or objects. The validation block added earlier partly compensates, but a type constraint reports the problem better and earlier.",
+      "file": "variables.tf",
+      "first_seen": "2026-08-22",
+      "fix": "  type = list(string)",
+      "fixable": true,
+      "id": "HOLDEN_BP_005",
+      "last_seen": "2026-08-22",
+      "line": 68,
+      "principle": "maintainability",
+      "remediation": "Narrow to list(string) and map(string). Both are strictly more informative on failure and no harder to satisfy.",
+      "resource": "var.log_group_name",
+      "severity": "LOW",
+      "status": "fixed",
+      "title": "Collection variables typed as list(any) / map(any) instead of their real element type"
+    }
+  ],
+  "scan_date": "2026-08-22T17:40:00Z",
+  "scan_path": ". example/examplea",
+  "suggested_policies": [
+    {
+      "rationale": "A Firehose delivery stream with cloudwatch_logging_options disabled fails silently: delivery errors produce no record anywhere, so the outage presents as data quietly not arriving. The attribute is a single boolean on a fixed path, unambiguous on any Terraform using this resource type, and no existing holden policy references cloudwatch_logging_options at all.",
+      "status": "implemented as HLD_AWS_383 (holden commit 26fc276)",
+      "yaml": "id: HLD_AWS_383\nname: Kinesis Firehose delivery streams should enable delivery error logging\nprinciple: reliability\nseverity: MEDIUM\nrationale: |\n  cloudwatch_logging_options defaults to disabled. With it off, a delivery\n  stream that cannot write to its destination -- a denied KMS key, a changed\n  bucket policy, a role whose permissions drifted -- produces no error record\n  anywhere. The failure is visible only as data not arriving, which is the\n  hardest kind of outage to notice and the slowest to diagnose.\nremediation: |\n  Enable error logging to a CloudWatch log group:\n\n    extended_s3_configuration {\n      role_arn   = aws_iam_role.firehose.arn\n      bucket_arn = aws_s3_bucket.example.arn\n\n      cloudwatch_logging_options {\n        enabled         = true\n        log_group_name  = aws_cloudwatch_log_group.firehose.name\n        log_stream_name = \"S3Delivery\"\n      }\n    }\nresources:\n  aws_kinesis_firehose_delivery_stream:\n    path: extended_s3_configuration.cloudwatch_logging_options.enabled\n    required: true\n    equals: true\n"
+    },
+    {
+      "rationale": "HLD_AWS_114 only checks that an aws_s3_bucket_lifecycle_configuration exists and names a bucket, so a configuration whose rules cover only noncurrent versions and aborted uploads passes while current objects accumulate forever. Requiring at least one rule with an expiration or transition closes the gap that made HOLDEN_BP_002 invisible to the engine.",
+      "status": "implemented as HLD_AWS_384 (holden commit a6446d5)",
+      "yaml": "id: HLD_AWS_384\nname: S3 lifecycle configuration must bound current object versions\nprinciple: cost\nseverity: MEDIUM\nrationale: |\n  HLD_AWS_114 is satisfied by the presence of a lifecycle configuration. That\n  leaves a common shape uncaught: rules that cover only noncurrent_version_*\n  and abort_incomplete_multipart_upload, which bound nothing on a bucket whose\n  current objects are the ones actually accumulating. On a log or artifact\n  sink that is unbounded growth in S3 Standard, indefinitely.\nremediation: |\n  Give at least one enabled rule an expiration or a transition:\n\n    rule {\n      id     = \"expire-logs\"\n      status = \"Enabled\"\n\n      transition {\n        days          = 30\n        storage_class = \"STANDARD_IA\"\n      }\n\n      expiration {\n        days = 365\n      }\n    }\nresources:\n  aws_s3_bucket_lifecycle_configuration:\n    path: rule\n    any:\n      - path: expiration\n        not_null: true\n      - path: transition\n        not_null: true\n"
+    }
+  ],
+  "unresolved_review": {
+    "confirmed_safe": 1,
+    "detail": [
+      {
+        "policy_id": "HLD_TF_082",
+        "reasoning": "The check looks for placeholder default values. This variable declares no default at all, so there is nothing to place-hold. It lands on Unknown only because holden evaluates it through the module call, where the supplied argument is aws_kms_key.example.arn -- an unresolvable reference rather than a literal. A KMS key ARN produced by a real resource is definitionally not a placeholder string.",
+        "resource": "module.cloudwatchtos3.var.kms_master_key_id",
+        "verdict": "confirmed_safe"
+      }
+    ],
+    "resolved_to_finding": 0,
+    "reviewed": 1,
+    "still_unresolvable": 0
+  }
+}
