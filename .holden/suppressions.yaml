@@ -1,0 +1,10 @@
+suppressions:
+  - policy_id: HLD_AWS_281
+    resource_id: aws_s3_bucket_versioning.cloudwatch_bin
+    reason: "Versioning is deliberately Disabled: this is a write-once CloudWatch log sink whose retention is managed by the bucket lifecycle rules (noncurrent expiry 365d, abort incomplete MPU 7d). Enabling versioning would duplicate every delivered log object and multiply storage cost with no recovery benefit. Matches the existing CKV_AWS_21 skip."
+    approved_by: james.woolfenden
+
+  - policy_id: HLD_AWS_310
+    resource_id: aws_s3_bucket.cloudwatch_bin
+    reason: "Object Lock requires versioning, which this log-sink bucket deliberately leaves Disabled (see HLD_AWS_281 suppression). object_lock_enabled can also only be set at bucket creation, so adding it would force replacement of every existing deployment's bucket."
+    approved_by: james.woolfenden
