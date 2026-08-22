@@ -1,3 +1,5 @@
+# holden:ignore:HLD_AWS_310: Object Lock needs versioning, deliberately Disabled below,
+# and can only be set at bucket creation — enabling it would replace existing buckets
 resource "aws_s3_bucket" "cloudwatch_bin" {
   bucket = var.log_bucket
 }
@@ -20,6 +22,8 @@ resource "aws_s3_bucket_logging" "cloudwatch_bin" {
   target_prefix = "${aws_s3_bucket.cloudwatch_bin.bucket}/"
 }
 
+# holden:ignore:HLD_AWS_281: write-once CloudWatch log sink; versioning would duplicate
+# every delivered object for no recovery benefit. Retention is the lifecycle rules.
 resource "aws_s3_bucket_versioning" "cloudwatch_bin" {
   bucket = aws_s3_bucket.cloudwatch_bin.bucket
 

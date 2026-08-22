@@ -3,3 +3,16 @@ scan_roots:
     targets: [gha]
   - path: example/examplea
     targets: [terraform]
+
+# Both of these fire at workspace scope, which has no code location to carry an
+# inline holden:ignore comment. Every other suppression in this repo is inline,
+# on the resource it applies to.
+skip_policies:
+  # The permission count is this module's own footprint: one CloudWatch-Logs-to-S3
+  # pipeline plus the server-access-log target it owns. Splitting it would stop the
+  # module delivering the thing it exists to deliver.
+  - HLD_TF_029
+  # 17 resource types is the module's stated scope — a bucket and its configuration
+  # resources, Firehose and its error log group, two IAM roles and their policies,
+  # SNS notification. None of it can be applied independently.
+  - HLD_TF_073

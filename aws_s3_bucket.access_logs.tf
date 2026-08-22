@@ -2,6 +2,10 @@
 # rather than asking the caller to supply one, because a log-delivery bucket
 # has prerequisites that are easy to get wrong and fail silently: S3 drops
 # records instead of erroring when they are not met.
+# holden:ignore:HLD_AWS_144: this bucket IS the server-access-log target; giving it
+# one would need a fourth bucket with the same requirement, and so on
+# holden:ignore:HLD_AWS_310: Object Lock needs versioning, deliberately Disabled here,
+# and can only be set at bucket creation
 resource "aws_s3_bucket" "access_logs" {
   bucket = local.access_log_bucket
 }
@@ -41,6 +45,8 @@ resource "aws_s3_bucket_ownership_controls" "access_logs" {
   ]
 }
 
+# holden:ignore:HLD_AWS_281: S3 writes each access-log object once and never modifies
+# it, so there are no noncurrent versions; retention is bounded by the lifecycle rules
 resource "aws_s3_bucket_versioning" "access_logs" {
   bucket = aws_s3_bucket.access_logs.bucket
 
