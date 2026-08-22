@@ -1,0 +1,53 @@
+suppressions:
+  # --- Findings against this example root itself ---
+  - policy_id: HLD_TF_004
+    resource_id: terraform
+    reason: "example/examplea is a disposable test fixture applied and destroyed by CI and by hand; it deliberately keeps state local rather than claiming a shared remote backend."
+    approved_by: james.woolfenden
+
+  - policy_id: HLD_TF_020
+    resource_id: aws_cloudwatch_log_group.example
+    reason: "'example' is the accurate name here - this is the module's example fixture, not a placeholder left in production code."
+    approved_by: james.woolfenden
+
+  - policy_id: HLD_TF_020
+    resource_id: aws_kms_key.example
+    reason: "'example' is the accurate name here - this is the module's example fixture, not a placeholder left in production code."
+    approved_by: james.woolfenden
+
+  - policy_id: HLD_AWS_318
+    resource_id: aws_cloudwatch_log_group.example
+    reason: "Ephemeral example log group that CI destroys; deletion protection would block teardown. This is the disposition the policy's own remediation recommends for example fixtures."
+    approved_by: james.woolfenden
+
+  - policy_id: HLD_TF_041
+    resource_id: aws_kms_key.example
+    reason: "prevent_destroy would make this example impossible to tear down. The key exists only to demonstrate passing a CMK into the module."
+    approved_by: james.woolfenden
+
+  - policy_id: HLD_TF_026
+    resource_id: module.cloudwatchtos3
+    reason: "source = \"../../\" is intentional: this example exists to exercise the module in this repo at its current commit. A registry address would test the last published release instead of the code under review."
+    approved_by: james.woolfenden
+
+  - policy_id: HLD_TF_029
+    resource_id: workspace
+    reason: "The 108 permissions are the module's own footprint (S3 + Firehose + CloudWatch Logs + SNS + IAM), exercised end to end by design. Splitting the example would stop it testing the module as a whole."
+    approved_by: james.woolfenden
+
+  # --- Findings reported against the module under test; see the module's
+  # --- own .holden/suppressions.yaml at the repo root for full rationale.
+  - module: module.cloudwatchtos3
+    policy_id: HLD_TF_073
+    reason: "17 resource types is this module's stated scope: one CloudWatch-Logs-to-S3 delivery pipeline whose parts (bucket + its 6 configuration resources, Firehose, 2 IAM roles and their policies, SNS notification) cannot be applied independently."
+    approved_by: james.woolfenden
+
+  - module: module.cloudwatchtos3
+    policy_id: HLD_AWS_281
+    reason: "Versioning is deliberately Disabled on this write-once log sink; retention is handled by lifecycle rules. See the module's own suppression."
+    approved_by: james.woolfenden
+
+  - module: module.cloudwatchtos3
+    policy_id: HLD_AWS_310
+    reason: "Object Lock requires versioning, which is deliberately Disabled, and can only be set at bucket creation. See the module's own suppression."
+    approved_by: james.woolfenden

@@ -6,8 +6,6 @@
 ![Terraform Version](https://img.shields.io/badge/tf-%3E%3D0.14.0-blue.svg)
 [![Infrastructure Tests](https://www.bridgecrew.cloud/badges/github/JamesWoolfenden/terraform-aws-cloudwatch-s3/cis_aws)](https://www.bridgecrew.cloud/link/badge?vcs=github&fullRepo=JamesWoolfenden%2Fterraform-aws-cloudwatch-s3&benchmark=CIS+AWS+V1.2)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
-[![checkov](https://img.shields.io/badge/checkov-verified-brightgreen)](https://www.checkov.io/)
-[![Infrastructure Tests](https://www.bridgecrew.cloud/badges/github/jameswoolfenden/terraform-aws-cloudwatch-s3/general)](https://www.bridgecrew.cloud/link/badge?vcs=github&fullRepo=JamesWoolfenden%2Fterraform-aws-cloudwatch-s3&benchmark=INFRASTRUCTURE+SECURITY)
 
 Terraform module to provision infra that collates CloudWatch data into an s3 data lake [`cloudwatch`](https://aws.amazon.com/cloudwatch/).
 
@@ -62,7 +60,7 @@ No modules.
 | [aws_s3_bucket.cloudwatch_bin](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) | resource |
 | [aws_s3_bucket_lifecycle_configuration.expire](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_lifecycle_configuration) | resource |
 | [aws_s3_bucket_logging.cloudwatch_bin](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_logging) | resource |
-| [aws_s3_bucket_notification.bucket_notification](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_notification) | resource |
+| [aws_s3_bucket_notification.log_deletes](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_notification) | resource |
 | [aws_s3_bucket_ownership_controls.logs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_ownership_controls) | resource |
 | [aws_s3_bucket_policy.cloudwatch_bin_bucket_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_policy) | resource |
 | [aws_s3_bucket_public_access_block.bucket](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_public_access_block) | resource |
@@ -79,15 +77,15 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
-| <a name="input_cloudwatch_stream_name"></a> [cloudwatch\_stream\_name](#input\_cloudwatch\_stream\_name) | n/a | `string` | n/a | yes |
-| <a name="input_filter_pattern"></a> [filter\_pattern](#input\_filter\_pattern) | description | `string` | n/a | yes |
+| <a name="input_cloudwatch_stream_name"></a> [cloudwatch\_stream\_name](#input\_cloudwatch\_stream\_name) | Name of the Kinesis Firehose delivery stream, also used as the prefix for the IAM roles this module creates. | `string` | n/a | yes |
+| <a name="input_filter_pattern"></a> [filter\_pattern](#input\_filter\_pattern) | The CloudWatch Logs filter pattern applied to each subscription filter. An empty string matches every log event. | `string` | n/a | yes |
 | <a name="input_kms_master_key_id"></a> [kms\_master\_key\_id](#input\_kms\_master\_key\_id) | The KMS key id to use for Encryption | `string` | n/a | yes |
-| <a name="input_log_bucket"></a> [log\_bucket](#input\_log\_bucket) | n/a | `string` | n/a | yes |
+| <a name="input_log_bucket"></a> [log\_bucket](#input\_log\_bucket) | Name of the S3 bucket to create and stream all the logs to. | `string` | n/a | yes |
 | <a name="input_log_bucket_logging"></a> [log\_bucket\_logging](#input\_log\_bucket\_logging) | Access bucket logging. | `string` | `null` | no |
-| <a name="input_log_bucket_mfa_delete"></a> [log\_bucket\_mfa\_delete](#input\_log\_bucket\_mfa\_delete) | If you set this as the default its going to make it hard to delete | `string` | `"Disabled"` | no |
+| <a name="input_log_bucket_mfa_delete"></a> [log\_bucket\_mfa\_delete](#input\_log\_bucket\_mfa\_delete) | Whether MFA delete is required on the log bucket. Setting this to Enabled makes the bucket hard to delete. | `string` | `"Disabled"` | no |
 | <a name="input_log_group_name"></a> [log\_group\_name](#input\_log\_group\_name) | A log group to stream | `list(any)` | n/a | yes |
 | <a name="input_region_desc"></a> [region\_desc](#input\_region\_desc) | A string used to help name stuff doesnt have to be a region | `string` | n/a | yes |
-| <a name="input_s3_events"></a> [s3\_events](#input\_s3\_events) | Events to notify on | `list` | <pre>[<br/>  "s3:ObjectRemoved:*"<br/>]</pre> | no |
+| <a name="input_s3_events"></a> [s3\_events](#input\_s3\_events) | Events to notify on | `list(string)` | <pre>[<br/>  "s3:ObjectRemoved:*"<br/>]</pre> | no |
 | <a name="input_server_side_encryption"></a> [server\_side\_encryption](#input\_server\_side\_encryption) | Encrypt at rest | `bool` | `true` | no |
 | <a name="input_sse_algorithm"></a> [sse\_algorithm](#input\_sse\_algorithm) | The Encryption algorithm to use | `string` | `"aws:kms"` | no |
 
@@ -95,9 +93,9 @@ No modules.
 
 | Name | Description |
 | ---- | ----------- |
-| <a name="output_cloudwatch_bin"></a> [cloudwatch\_bin](#output\_cloudwatch\_bin) | n/a |
-| <a name="output_cwlrolearn"></a> [cwlrolearn](#output\_cwlrolearn) | n/a |
-| <a name="output_firehosearn"></a> [firehosearn](#output\_firehosearn) | n/a |
+| <a name="output_cloudwatch_bin"></a> [cloudwatch\_bin](#output\_cloudwatch\_bin) | The S3 bucket resource that CloudWatch logs are delivered into. |
+| <a name="output_cwlrolearn"></a> [cwlrolearn](#output\_cwlrolearn) | ARN of the IAM role assumed by CloudWatch Logs to publish to the Firehose delivery stream. |
+| <a name="output_firehosearn"></a> [firehosearn](#output\_firehosearn) | ARN of the IAM role assumed by Kinesis Firehose to write to the log bucket. |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 ## Policy
@@ -108,6 +106,7 @@ This is the policy required to build this project:
 The Terraform resource required is:
 
 ```golang
+# apply role — full permissions for terraform apply
 resource "aws_iam_policy" "terraform_pike" {
   name_prefix = "terraform_pike"
   path        = "/"
@@ -218,6 +217,54 @@ resource "aws_iam_policy" "terraform_pike" {
 })
 }
 
+# plan role — read-only permissions for terraform plan
+resource "aws_iam_policy" "terraform_pike_plan" {
+  name_prefix = "terraform_pike_plan"
+  path        = "/"
+  description = "Pike Autogenerated policy from IAC"
+
+  policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "logs:DescribeSubscriptionFilters"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetAccelerateConfiguration",
+                "s3:GetBucketAcl",
+                "s3:GetBucketCORS",
+                "s3:GetBucketLogging",
+                "s3:GetBucketObjectLockConfiguration",
+                "s3:GetBucketPolicy",
+                "s3:GetBucketRequestPayment",
+                "s3:GetBucketTagging",
+                "s3:GetBucketVersioning",
+                "s3:GetBucketWebsite",
+                "s3:GetEncryptionConfiguration",
+                "s3:GetLifecycleConfiguration",
+                "s3:GetObject",
+                "s3:GetObjectAcl",
+                "s3:GetReplicationConfiguration",
+                "s3:ListBucket"
+            ],
+            "Resource": [
+                "*"
+            ]
+        }
+    ]
+})
+}
+
 
 ```
 <!-- END OF PRE-COMMIT-PIKE DOCS HOOK -->
@@ -242,7 +289,7 @@ Please use the [issue tracker](https://github.com/jameswoolfenden/terraform-aws-
 
 ## Copyrights
 
-Copyright © 2019-2023 James Woolfenden
+Copyright © 2019-2026 James Woolfenden
 
 ## License
 

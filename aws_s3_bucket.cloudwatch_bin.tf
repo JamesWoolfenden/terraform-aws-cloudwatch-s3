@@ -20,7 +20,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "cloudwatch_bin" {
     }
   }
 }
-// this would need an acl on var.log_bucket_logging to allow logging
+# this would need an acl on var.log_bucket_logging to allow logging
 resource "aws_s3_bucket_logging" "cloudwatch_bin" {
   count  = var.log_bucket_logging != null ? 1 : 0
   bucket = aws_s3_bucket.cloudwatch_bin.bucket
@@ -36,7 +36,7 @@ resource "aws_s3_bucket_versioning" "cloudwatch_bin" {
     mfa_delete = var.log_bucket_mfa_delete
   }
 }
-resource "aws_s3_bucket_notification" "bucket_notification" {
+resource "aws_s3_bucket_notification" "log_deletes" {
   bucket = aws_s3_bucket.cloudwatch_bin.id
 
   topic {

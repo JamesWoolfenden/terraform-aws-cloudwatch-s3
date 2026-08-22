@@ -1,7 +1,8 @@
 resource "aws_kms_key" "example" {
   # checkov:skip=CKV2_AWS_64: For example only, key policy managed via IAM
-  enable_key_rotation = true
-  policy              = <<POLICY
+  enable_key_rotation     = true
+  deletion_window_in_days = 7
+  policy                  = <<POLICY
 {
   "Sid": "Enable IAM User Permissions",
   "Effect": "Allow",

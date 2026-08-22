@@ -1,15 +1,26 @@
 data "aws_iam_policy_document" "cloudwatch" {
-  # checkov:skip=CKV_AWS_356: IAM policy requires broad access for this module to function
-  # checkov:skip=CKV_AWS_290: IAM policy requires broad write access for this module to function
-  # checkov:skip=CKV_AWS_355: IAM policy requires wildcard resource for this module to function
   statement {
-    actions   = ["firehose:*"]
-    resources = ["arn:aws:firehose:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:*"]
+    sid = "PublishToDeliveryStream"
+
+    actions = [
+      "firehose:DescribeDeliveryStream",
+      "firehose:PutRecord",
+      "firehose:PutRecordBatch"
+    ]
+
+    resources = [aws_kinesis_firehose_delivery_stream.extended_s3_stream.arn]
   }
 
   statement {
+    sid       = "PassDeliveryStreamRole"
     actions   = ["iam:PassRole"]
     resources = [aws_iam_role.cwl.arn]
+
+    condition {
+      test     = "StringEquals"
+      variable = "iam:PassedToService"
+      values   = ["firehose.amazonaws.com"]
+    }
   }
 
   version = "2012-10-17"
