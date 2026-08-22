@@ -4,5 +4,4 @@ cd example/examplea || return
 rm .terraform -fr 2>/dev/null
 terraform init -upgrade
 terraform validate
-make cost
 make valid

@@ -7,6 +7,7 @@ variable "cloudwatch_stream_name" {
     error_message = "The cloudwatch_stream_name must be 1-64 characters of letters, numbers, underscores, hyphens or periods."
   }
 }
+
 variable "log_bucket" {
   type        = string
   description = "The name of the bucket to stream all the logs to."
@@ -16,6 +17,7 @@ variable "log_bucket" {
     error_message = "The log_bucket must be a valid S3 bucket name: 3-63 lowercase characters, starting and ending alphanumeric."
   }
 }
+
 variable "filter_pattern" {
   type        = string
   description = "The CloudWatch Logs filter pattern applied to each subscription filter."
@@ -25,6 +27,7 @@ variable "filter_pattern" {
     error_message = "The filter_pattern must be 1024 characters or fewer."
   }
 }
+
 variable "region_desc" {
   type        = string
   description = "Region"
@@ -34,6 +37,7 @@ variable "region_desc" {
     error_message = "The region_desc must be 1-32 characters of letters, numbers or hyphens."
   }
 }
+
 variable "log_group_name" {
   type        = list(any)
   description = "The name of the log group to stream"
@@ -43,6 +47,7 @@ variable "log_group_name" {
     error_message = "The log_group_name must contain at least one log group name."
   }
 }
+
 variable "common_tags" {
   type        = map(any)
   description = "Supplied to provider default tags"

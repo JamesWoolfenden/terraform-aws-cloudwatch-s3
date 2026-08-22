@@ -7,5 +7,4 @@ Remove-Item .terraform -Recurse -ErrorAction SilentlyContinue
 terraform init -upgrade
 terraform validate
 make valid
-make cost
 Pop-Location
