@@ -1,4 +1,5 @@
-# holden:ignore:HLD_TF_004
+# holden:ignore:HLD_TF_004: disposable test fixture applied and destroyed by CI;
+# it deliberately keeps state local rather than claiming a shared remote backend
 terraform {
   required_providers {
     aws = {

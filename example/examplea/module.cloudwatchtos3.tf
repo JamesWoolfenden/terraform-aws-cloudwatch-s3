@@ -1,3 +1,5 @@
+# holden:ignore:HLD_TF_026: source = "../../" is intentional — this example exists to
+# exercise the module in this repo at its current commit, not the last published release
 module "cloudwatchtos3" {
   source                 = "../../"
   cloudwatch_stream_name = var.cloudwatch_stream_name

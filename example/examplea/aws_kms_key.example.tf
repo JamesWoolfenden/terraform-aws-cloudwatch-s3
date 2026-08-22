@@ -1,3 +1,6 @@
+# holden:ignore:HLD_TF_020: "example" is the accurate name for a module example fixture
+# holden:ignore:HLD_TF_041: prevent_destroy would make this example impossible to tear
+# down; the key exists only to demonstrate passing a CMK into the module
 resource "aws_kms_key" "example" {
   enable_key_rotation     = true
   deletion_window_in_days = 7
